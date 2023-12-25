@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+</head>
+
+<body>
+    <div id="app">
+        <el-table border :data="tableData" :span-method="mergeMethod">
+            <el-table-column prop="name" label="姓名"></el-table-column>
+            <el-table-column prop="age" label="年龄"></el-table-column>
+            <el-table-column prop="address" label="地址"></el-table-column>
+        </el-table>
+    </div>
+
+    <script src="https://unpkg.com/vue@2.5.2/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="../dist/mergeHelper.js"></script>
+    <script>
+        const vm = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    tableData: [],
+                }
+            },
+            mounted() {
+                const data = this.getData()
+                const { CellMerger } = mergeHelper;
+                const cellMerger = new CellMerger({
+                    dataSource: data,
+                    // mergeFields: ['name', 'age', 'address']
+                    mergeFields: ['name']
+                })
+                console.log(cellMerger.getMergedData())
+                this.tableData = cellMerger.getMergedData();
+            },
+            methods: {
+                getData() {
+                    const data = new Array(3).fill(0).map((_, index) => {
+                        return {
+                            name: index < 3 ? 'John' : 'Bob',
+                            age: 28,
+                            address: '123 Main St'
+                        }
+                    })
+                    return data;
+                },
+                mergeMethod({ row, column, rowIndex, columnIndex }) {
+                    return [1, 1]
+                },
+            },
+        })
+    </script>
+</body>
+
+</html>
