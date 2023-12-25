@@ -1,5 +1,5 @@
 import { CellMerger } from '../src/cellMerge';
-import { CellMergerOptions } from '../src/cellMerge/types';
+import type { CellMergerOptions } from '../src/cellMerge/types';
 import { MERGE_OPTS_KEY } from '../src/utils/constants';
 
 test('计算扁平数据', () => {
@@ -19,7 +19,8 @@ test('计算扁平数据', () => {
 	const mergedData = cellMerger.getMergedData();
 	const result = mergedData.every((item) => {
 		const obj = typeof item === 'object' ? item[MERGE_OPTS_KEY] : null;
-		const isValid = obj != null && Object.keys(obj).length === 3;
+		const isValid =
+			obj != null && Object.keys(obj as Record<string, unknown>).length === 3;
 		return isValid;
 	});
 	expect(result).toEqual(true);

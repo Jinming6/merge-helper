@@ -1,4 +1,4 @@
-import { cloneDeep, isString, isPlainObject } from 'lodash';
+import { cloneDeep, isString, isPlainObject, isFunction } from 'lodash';
 import type { CellMergerOptions, DataSourceItem, MergeFields } from './types';
 import { MERGE_OPTS_KEY } from '../utils/constants';
 
@@ -41,28 +41,41 @@ export class CellMerger {
 
 	// 合并单元格
 	mergeCells(dataSource: DataSourceItem[]): void {
-		this.mergeFields.forEach((field) => {
-			if (isString(field)) {
-				for (let i = 0; i < dataSource.length; i++) {
-					const item = dataSource[i];
-					this.initMergeOpts(item, field);
-					if (this.isMergedCell(item, field)) {
-						continue;
-					}
-					for (let j = i + 1; j < dataSource.length; j++) {
-						const nextItem = dataSource[j];
-						this.initMergeOpts(nextItem, field);
-
-						if (item[field] === nextItem[field]) {
-							item[MERGE_OPTS_KEY][field].rowspan += 1;
-							nextItem[MERGE_OPTS_KEY][field].rowspan = 0;
-						} else {
-							break;
-						}
-					}
+		this.mergeFields.forEach((fieldItem) => {
+			if (isString(fieldItem)) {
+				this.mergeCellsByField(dataSource, fieldItem);
+			} else if (isPlainObject(fieldItem)) {
+				const { field, callback } = fieldItem;
+				// TODO 处理callback
+				if (isString(field) && isFunction(callback)) {
+					this.mergeCellsByField(dataSource, field);
 				}
 			}
 		});
+	}
+
+	// 根据字段来计算单元格的合并
+	mergeCellsByField(dataSource: DataSourceItem[], field: string): void {
+		if (!isString(field)) {
+			return;
+		}
+		for (let i = 0; i < dataSource.length; i++) {
+			const item = dataSource[i];
+			this.initMergeOpts(item, field);
+			if (this.isMergedCell(item, field)) {
+				continue;
+			}
+			for (let j = i + 1; j < dataSource.length; j++) {
+				const nextItem = dataSource[j];
+				this.initMergeOpts(nextItem, field);
+				if (item[field] === nextItem[field]) {
+					item[MERGE_OPTS_KEY][field].rowspan += 1;
+					nextItem[MERGE_OPTS_KEY][field].rowspan = 0;
+				} else {
+					break;
+				}
+			}
+		}
 	}
 
 	// 获取合并后的数据

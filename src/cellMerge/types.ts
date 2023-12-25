@@ -11,6 +11,4 @@ export interface CellMergerOptions {
 	isTreeData?: boolean;
 }
 
-export interface DataSourceItem {
-	[key: string]: any;
-}
+export type DataSourceItem = Record<string, any>;
