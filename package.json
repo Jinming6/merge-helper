@@ -1,5 +1,5 @@
 {
-	"name": "merge-helper",
+	"name": "@jinming6/merge-helper",
 	"version": "1.0.0",
 	"main": "dist/mergeHelper.js",
 	"scripts": {
