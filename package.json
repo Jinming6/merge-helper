@@ -15,7 +15,7 @@
 		"cell-merge",
 		"table-merge"
 	],
-	"author": "Jinming6",
+	"author": "Jinming6 <response965@163.com>",
 	"license": "MIT",
 	"devDependencies": {
 		"@rollup/plugin-node-resolve": "^15.2.3",
