@@ -1,8 +1,7 @@
 {
 	"name": "merge-helper",
 	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
+	"main": "dist/mergeHelper.js",
 	"scripts": {
 		"test": "jest",
 		"build": "rollup --config rollup.config.ts --configPlugin typescript",
