@@ -9,9 +9,14 @@
 		"dev": "rollup --watch --config rollup.config.ts --configPlugin typescript",
 		"prepare": "husky install"
 	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
+	"keywords": [
+		"merge",
+		"merge-helper",
+		"cell-merge",
+		"table-merge"
+	],
+	"author": "Jinming6",
+	"license": "MIT",
 	"devDependencies": {
 		"@rollup/plugin-node-resolve": "^15.2.3",
 		"@rollup/plugin-terser": "^0.4.4",

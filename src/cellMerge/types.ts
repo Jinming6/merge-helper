@@ -1,9 +1,9 @@
 export interface MergeFieldItem {
 	field: string;
-	callback: () => boolean;
+	callback: (curItem: DataSourceItem, nextItem: DataSourceItem) => boolean;
 }
 
-export type MergeFields = string[] | MergeFieldItem[];
+export type MergeFields = Array<string | MergeFieldItem>;
 
 export interface CellMergerOptions {
 	dataSource: DataSourceItem[];

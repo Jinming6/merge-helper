@@ -1,3 +1,4 @@
 import { CellMerger } from './cellMerge';
+import * as constants from './utils/constants';
 
-export { CellMerger };
+export { CellMerger, constants };

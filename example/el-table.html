@@ -12,6 +12,7 @@
 <body>
     <div id="app">
         <el-table border :data="tableData" :span-method="mergeMethod">
+            <el-table-column type="index" label="序号" width="50"></el-table-column>
             <el-table-column prop="name" label="姓名"></el-table-column>
             <el-table-column prop="age" label="年龄"></el-table-column>
             <el-table-column prop="address" label="地址"></el-table-column>
@@ -22,6 +23,7 @@
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <script src="../dist/mergeHelper.js"></script>
     <script>
+        const { MERGE_OPTS_KEY, SORT_NO_KEY } = mergeHelper.constants;
         const vm = new Vue({
             el: '#app',
             data() {
@@ -34,24 +36,38 @@
                 const { CellMerger } = mergeHelper;
                 const cellMerger = new CellMerger({
                     dataSource: data,
-                    // mergeFields: ['name', 'age', 'address']
-                    mergeFields: ['name']
+                    mergeFields: [{
+                        field: 'name',
+                        callback(curItem, nextItem) {
+                            return curItem.name === nextItem.name && curItem.address === nextItem.address
+                        }
+                    }, 'age', 'address']
                 })
                 console.log(cellMerger.getMergedData())
                 this.tableData = cellMerger.getMergedData();
             },
             methods: {
                 getData() {
-                    const data = new Array(3).fill(0).map((_, index) => {
+                    const data = new Array(10).fill(0).map((_, index) => {
+                        const flag = index < 3
                         return {
-                            name: index < 3 ? 'John' : 'Bob',
-                            age: 28,
+                            name: flag ? 'John' : 'Bob',
+                            age: flag ? 28 : 18,
                             address: '123 Main St'
                         }
                     })
                     return data;
                 },
                 mergeMethod({ row, column, rowIndex, columnIndex }) {
+                    if (columnIndex === 1) {
+                        return row[MERGE_OPTS_KEY].name
+                    }
+                    if (columnIndex === 2) {
+                        return row[MERGE_OPTS_KEY].age
+                    }
+                    if (columnIndex === 3) {
+                        return row[MERGE_OPTS_KEY].address
+                    }
                     return [1, 1]
                 },
             },

@@ -2,11 +2,13 @@
 
 轻松处理单元格的合并
 
+阅读 [文档]()
+
 ## 特性
 
-- [ ] 跨行合并
+- [x] 跨行合并
+- [x] 自定义条件合并
 - [ ] 跨列合并
-- [ ] 自定义条件合并
 
 ## 安装
 
@@ -25,15 +27,5 @@ $ pnpm add merge-helper
 ## 快速上手
 
 ```js
-import MergeHelper from 'merge-helper';
 
-const mergeHelper = new MergeHelper();
 ```
-
-## API
-
-### 属性
-
-### 事件
-
-### 方法

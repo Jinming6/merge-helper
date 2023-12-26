@@ -1,5 +1,10 @@
 import { cloneDeep, isString, isPlainObject, isFunction } from 'lodash';
-import type { CellMergerOptions, DataSourceItem, MergeFields } from './types';
+import type {
+	CellMergerOptions,
+	DataSourceItem,
+	MergeFieldItem,
+	MergeFields,
+} from './types';
 import { MERGE_OPTS_KEY } from '../utils/constants';
 
 export class CellMerger {
@@ -46,16 +51,19 @@ export class CellMerger {
 				this.mergeCellsByField(dataSource, fieldItem);
 			} else if (isPlainObject(fieldItem)) {
 				const { field, callback } = fieldItem;
-				// TODO 处理callback
 				if (isString(field) && isFunction(callback)) {
-					this.mergeCellsByField(dataSource, field);
+					this.mergeCellsByField(dataSource, field, callback);
 				}
 			}
 		});
 	}
 
 	// 根据字段来计算单元格的合并
-	mergeCellsByField(dataSource: DataSourceItem[], field: string): void {
+	mergeCellsByField(
+		dataSource: DataSourceItem[],
+		field: string,
+		condition?: MergeFieldItem['callback'],
+	): void {
 		if (!isString(field)) {
 			return;
 		}
@@ -68,7 +76,11 @@ export class CellMerger {
 			for (let j = i + 1; j < dataSource.length; j++) {
 				const nextItem = dataSource[j];
 				this.initMergeOpts(nextItem, field);
-				if (item[field] === nextItem[field]) {
+				if (
+					isFunction(condition)
+						? condition(item, nextItem)
+						: item[field] === nextItem[field]
+				) {
 					item[MERGE_OPTS_KEY][field].rowspan += 1;
 					nextItem[MERGE_OPTS_KEY][field].rowspan = 0;
 				} else {
