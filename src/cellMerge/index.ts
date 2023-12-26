@@ -5,7 +5,7 @@ import type {
 	MergeFieldItem,
 	MergeFields,
 } from './types';
-import { MERGE_OPTS_KEY } from '../utils/constants';
+import { MERGE_OPTS_KEY, SORT_NO_KEY } from '../utils/constants';
 
 export class CellMerger {
 	// 数据源
@@ -14,12 +14,18 @@ export class CellMerger {
 	mergeFields: MergeFields;
 	// 是否为树结构数据
 	isTreeData: boolean;
+	// 是否生成序号
+	genSort: boolean;
+	// 以该字段为准，进行排序
+	sortBy?: string;
 
 	constructor(options: CellMergerOptions) {
-		const { dataSource, mergeFields, isTreeData } = options;
+		const { dataSource, mergeFields, isTreeData, genSort, sortBy } = options;
 		this.dataSource = cloneDeep(dataSource);
 		this.mergeFields = cloneDeep(mergeFields);
-		this.isTreeData = (isTreeData ?? false) || false;
+		this.isTreeData = isTreeData ?? false;
+		this.genSort = genSort ?? false;
+		this.sortBy = sortBy;
 		if (!this.isTreeData) {
 			this.mergeCells(this.dataSource);
 		}
@@ -67,11 +73,15 @@ export class CellMerger {
 		if (!isString(field)) {
 			return;
 		}
+		let startNo = 1;
 		for (let i = 0; i < dataSource.length; i++) {
 			const item = dataSource[i];
 			this.initMergeOpts(item, field);
 			if (this.isMergedCell(item, field)) {
 				continue;
+			}
+			if (this.genSort) {
+				item[SORT_NO_KEY] = startNo;
 			}
 			for (let j = i + 1; j < dataSource.length; j++) {
 				const nextItem = dataSource[j];
@@ -87,6 +97,7 @@ export class CellMerger {
 					break;
 				}
 			}
+			startNo += 1;
 		}
 	}
 

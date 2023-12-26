@@ -8,6 +8,7 @@
 
 - [x] 跨行合并
 - [x] 自定义条件合并
+- [x] 生成合并后的序号
 - [ ] 跨列合并
 
 ## 安装
@@ -22,10 +23,4 @@ $ pnpm add merge-helper
 
 ```html
 <script src="https://unpkg.com/merge-helper/dist/mergeHelper.min.js"></script>
-```
-
-## 快速上手
-
-```js
-
 ```

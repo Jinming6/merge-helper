@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <!-- 引入样式 -->
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 </head>
 
 <body>
     <div id="app">
         <el-table border :data="tableData" :span-method="mergeMethod">
-            <el-table-column type="index" label="序号" width="50"></el-table-column>
+            <el-table-column type="index" label="原始序号" width="100"></el-table-column>
+            <el-table-column :prop="SORT_NO_KEY" label="合并序号" width="100"></el-table-column>
             <el-table-column prop="name" label="姓名"></el-table-column>
             <el-table-column prop="age" label="年龄"></el-table-column>
             <el-table-column prop="address" label="地址"></el-table-column>
@@ -29,6 +29,7 @@
             data() {
                 return {
                     tableData: [],
+                    SORT_NO_KEY
                 }
             },
             mounted() {
@@ -41,7 +42,9 @@
                         callback(curItem, nextItem) {
                             return curItem.name === nextItem.name && curItem.address === nextItem.address
                         }
-                    }, 'age', 'address']
+                    }, 'age', 'address'],
+                    genSort: true,
+                    sortBy: 'name'
                 })
                 console.log(cellMerger.getMergedData())
                 this.tableData = cellMerger.getMergedData();
