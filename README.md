@@ -14,11 +14,35 @@
 ### pnpm
 
 ```bash
-$ pnpm add merge-helper
+$ pnpm add @jinming6/merge-helper
 ```
 
 ### cdn
 
 ```html
-<script src="https://unpkg.com/merge-helper/dist/mergeHelper.min.js"></script>
+<script src="https://unpkg.com/@jinming6/merge-helper/dist/mergeHelper.min.js"></script>
+```
+
+### 快速上手
+
+```js
+import { CellMerger } from '@jinming6/merge-helper';
+const cellMerger = new CellMerger({
+	dataSource: data,
+	mergeFields: [
+		{
+			field: 'name',
+			callback(curItem, nextItem) {
+				return (
+					curItem.name === nextItem.name && curItem.address === nextItem.address
+				);
+			},
+		},
+		'age',
+		'address',
+	],
+	genSort: true,
+	sortBy: 'name',
+});
+const tableData = cellMerger.getMergedData(); // 得到合并后的数据
 ```
