@@ -6,7 +6,8 @@
 		"test": "jest",
 		"build": "rollup --config rollup.config.ts --configPlugin typescript",
 		"dev": "rollup --watch --config rollup.config.ts --configPlugin typescript",
-		"prepare": "husky install"
+		"prepare": "husky install",
+		"publish": "pnpm publish --access public"
 	},
 	"keywords": [
 		"merge",
