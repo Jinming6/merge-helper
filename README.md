@@ -9,7 +9,6 @@
 - [x] 跨行合并
 - [x] 自定义条件合并
 - [x] 生成合并后的序号
-- [ ] 跨列合并
 
 ## 安装
 
@@ -73,6 +72,9 @@ const tableData = cellMerger.getMergedData(); // 得到合并后的数据
 import { constants } from '@jinming6/merge-helper';
 const { MERGE_OPTS_KEY, SORT_NO_KEY } = constants;
 
+// 提示：
+// 根据合并后的值来处理
+// row[MERGE_OPTS_KEY]中就是计算后得到的值
 function mergeMethod({ row, column, rowIndex, columnIndex }) {
 	if (columnIndex === 1) {
 		return row[MERGE_OPTS_KEY].name;
@@ -86,3 +88,21 @@ function mergeMethod({ row, column, rowIndex, columnIndex }) {
 	return [1, 1];
 }
 ```
+
+## API
+
+### CellMerger 参数
+
+| 名称                        | 类型    | 描述                       |
+| --------------------------- | ------- | -------------------------- |
+| dataSource                  | Array   | 数据源                     |
+| [mergeFields](#mergeFields) | Array   | 需要进行「行合并」的字段   |
+| genSort                     | boolean | 是否生成「行合并」后的序号 |
+| sortBy                      | String  | 按照指定的字段进行序号计算 |
+
+#### <a name="mergeFields">mergeFields 参数</a>
+
+| 名称     | 类型     | 描述                         |
+| -------- | -------- | ---------------------------- |
+| field    | String   | 字段名称                     |
+| callback | Function | 自定义逻辑进行「行合并计算」 |

@@ -23,7 +23,8 @@
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <script src="../dist/mergeHelper.js"></script>
     <script>
-        const { MERGE_OPTS_KEY, SORT_NO_KEY } = mergeHelper.constants;
+        const { constants, CellMerger } = window['@jinming6/mergeHelper']
+        const { MERGE_OPTS_KEY, SORT_NO_KEY } = constants;
         const vm = new Vue({
             el: '#app',
             data() {
@@ -34,7 +35,6 @@
             },
             mounted() {
                 const data = this.getData()
-                const { CellMerger } = mergeHelper;
                 const cellMerger = new CellMerger({
                     dataSource: data,
                     mergeFields: [{

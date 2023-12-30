@@ -1,6 +1,6 @@
 {
 	"name": "@jinming6/merge-helper",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"main": "dist/mergeHelper.js",
 	"scripts": {
 		"test": "jest",
