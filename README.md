@@ -93,14 +93,14 @@ function mergeMethod({ row, column, rowIndex, columnIndex }) {
 
 ### CellMerger 参数
 
-| 名称                        | 类型    | 描述                       |
-| --------------------------- | ------- | -------------------------- |
-| dataSource                  | Array   | 数据源                     |
-| [mergeFields](#mergeFields) | Array   | 需要进行「行合并」的字段   |
-| genSort                     | boolean | 是否生成「行合并」后的序号 |
-| sortBy                      | String  | 按照指定的字段进行序号计算 |
+| 名称        | 类型                  | 描述                       |
+| ----------- | --------------------- | -------------------------- |
+| dataSource  | Array                 | 数据源                     |
+| mergeFields | [Array](#mergeFields) | 需要进行「行合并」的字段   |
+| genSort     | boolean               | 是否生成「行合并」后的序号 |
+| sortBy      | String                | 按照指定的字段进行序号计算 |
 
-#### <a name="mergeFields">mergeFields 参数</a>
+#### <a id="mergeFields">mergeFields 参数</a>
 
 | 名称     | 类型     | 描述                         |
 | -------- | -------- | ---------------------------- |
