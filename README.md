@@ -2,15 +2,21 @@
 
 轻松处理单元格的合并
 
-![效果展示](https://s2.loli.net/2023/12/27/CNDP1a3WJx9Hw6l.png)
+![截屏2024-01-07 23.44.15.png](https://s2.loli.net/2024/01/07/rqlRbZgUt6TD3xk.png)
 
-## 特性
+[更多示例](./example/el-table.html)
 
-- [x] 跨行合并
-- [x] 自定义条件合并
-- [x] 生成合并后的序号
+## 🎨 特性
 
-## 安装
+- [x] 只合并`行`
+- [x] 自定义条件进行`行合并`
+- [x] 生成`行合并`后的序号
+- [x] 只合并`列`
+- [x] 合并`行`和`列`
+
+## ⚙️ 安装
+
+🔔 提示： 使用前，请安装`lodash`。
 
 ### pnpm
 
@@ -18,64 +24,100 @@
 $ pnpm add @jinming6/merge-helper
 ```
 
-### cdn
+### yarn
+
+```bash
+$ yarn add @jinming6/merge-helper
+```
+
+### npm
+
+```bash
+$ npm add @jinming6/merge-helper
+```
+
+### CDN
 
 ```html
 <script src="https://unpkg.com/@jinming6/merge-helper/dist/mergeHelper.min.js"></script>
 ```
 
-### 快速上手
+### 🏄 快速上手
 
-1. 处理数据源
+#### 🌰 合并「 行 」
+
+> 1. 处理数据源
 
 ```js
-import { CellMerger } from '@jinming6/merge-helper';
-const cellMerger = new CellMerger({
-	dataSource: data,
-	mergeFields: [
-		{
-			field: 'name',
-			callback(curItem, nextItem) {
-				return (
-					curItem.name === nextItem.name && curItem.address === nextItem.address
-				);
-			},
-		},
-		'age',
-		'address',
-	],
-	genSort: true,
-	sortBy: 'name',
-});
-const tableData = cellMerger.getMergedData(); // 得到合并后的数据
+import { CellMerger, Mode } from '@jinming6/merge-helper';
+
+async function getTableData() {
+	const { dataSource } = await fetch('../data/data.json').then((res) =>
+		res.json(),
+	);
+	const cellMerger = new CellMerger({
+		mode: Mode.Row,
+		dataSource,
+		mergeFields: this.columns.map((item) => {
+			if (item.prop === 'province') {
+				return {
+					field: 'province',
+					callback(curItem, nextItem) {
+						return (
+							curItem.name === nextItem.name &&
+							curItem.province === nextItem.province
+						);
+					},
+				};
+			}
+			return item.prop;
+		}),
+		genSort: true,
+	});
+	this.tableData = cellMerger.getMergedData();
+}
 ```
 
-2. 在el-table中传入合并后的`tableData`
+> 2. 在el-table中传入合并后的`tableData`
 
 ```html
-<el-table border :data="tableData" :span-method="mergeMethod">
-	<el-table-column type="index" label="原始序号" width="100"></el-table-column>
+<el-table
+	border
+	:data="tableData"
+	:span-method="mergeMethod"
+	header-cell-class-name="tableHeader"
+>
 	<el-table-column
 		:prop="SORT_NO_KEY"
-		label="合并序号"
+		label="序号"
 		width="100"
+		:align="align"
 	></el-table-column>
-	<el-table-column prop="name" label="姓名"></el-table-column>
-	<el-table-column prop="age" label="年龄"></el-table-column>
-	<el-table-column prop="address" label="地址"></el-table-column>
+	<el-table-column
+		v-for="columnItem in columns"
+		:key="columnItem.prop"
+		:prop="columnItem.prop"
+		:label="columnItem.label"
+		:align="align"
+	></el-table-column>
 </el-table>
 ```
 
-3. 传入合并方法
+> 3. 传入合并方法
 
 ```js
 import { constants } from '@jinming6/merge-helper';
 const { MERGE_OPTS_KEY, SORT_NO_KEY } = constants;
 
-// 提示：
-// 根据合并后的值来处理
-// row[MERGE_OPTS_KEY]中就是计算后得到的值
+/**
+ * 提示：
+ * 根据合并后的值来处理
+ * row[MERGE_OPTS_KEY]中就是计算后得到的值
+ */
 function mergeMethod({ row, column, rowIndex, columnIndex }) {
+	if (columnIndex === 0) {
+		return [row[MERGE_OPTS_KEY].name.rowspan, 1];
+	}
 	if (columnIndex === 1) {
 		return row[MERGE_OPTS_KEY].name;
 	}
@@ -83,26 +125,224 @@ function mergeMethod({ row, column, rowIndex, columnIndex }) {
 		return row[MERGE_OPTS_KEY].age;
 	}
 	if (columnIndex === 3) {
-		return row[MERGE_OPTS_KEY].address;
+		return row[MERGE_OPTS_KEY].province;
+	}
+	if (columnIndex === 4) {
+		return row[MERGE_OPTS_KEY].city;
 	}
 	return [1, 1];
 }
 ```
 
-## API
+#### 🌰 合并「 列 」
 
-### CellMerger 参数
+> 1. 处理数据源
 
-| 名称        | 类型                  | 描述                       |
-| ----------- | --------------------- | -------------------------- |
-| dataSource  | Array                 | 数据源                     |
-| mergeFields | [Array](#mergeFields) | 需要进行「行合并」的字段   |
-| genSort     | boolean               | 是否生成「行合并」后的序号 |
-| sortBy      | String                | 按照指定的字段进行序号计算 |
+```js
+import { CellMerger, Mode } from '@jinming6/merge-helper';
 
-#### <a id="mergeFields">mergeFields 参数</a>
+async function getTableData() {
+	const { dataSource } = await fetch('../data/data.json').then((res) =>
+		res.json(),
+	);
+	const cellMerger = new CellMerger({
+		mode: Mode.Col,
+		dataSource,
+		mergeFields: this.columns.map((item) => item.prop),
+		genSort: true,
+		columns: this.columns,
+	});
+	this.colTableData = cellMerger.getMergedData();
+}
+```
 
-| 名称     | 类型     | 描述                         |
-| -------- | -------- | ---------------------------- |
-| field    | String   | 字段名称                     |
-| callback | Function | 自定义逻辑进行「行合并计算」 |
+> 2. 在el-table中传入合并后的`tableData`
+
+```html
+<el-table
+	border
+	:data="colTableData"
+	:span-method="colMergeMethod"
+	header-cell-class-name="tableHeader"
+>
+	<el-table-column
+		type="index"
+		label="序号"
+		width="100"
+		:align="align"
+	></el-table-column>
+	<el-table-column
+		v-for="columnItem in columns"
+		:key="columnItem.prop"
+		:prop="columnItem.prop"
+		:label="columnItem.label"
+		:align="align"
+	></el-table-column>
+</el-table>
+```
+
+> 3. 传入合并方法
+
+```js
+import { constants } from '@jinming6/merge-helper';
+const { MERGE_OPTS_KEY, SORT_NO_KEY } = constants;
+
+/**
+ * 提示：
+ * 根据合并后的值来处理
+ * row[MERGE_OPTS_KEY]中就是计算后得到的值
+ */
+function colMergeMethod({ row, column, rowIndex, columnIndex }) {
+	if (columnIndex === 1) {
+		return row[MERGE_OPTS_KEY].name;
+	}
+	if (columnIndex === 2) {
+		return row[MERGE_OPTS_KEY].age;
+	}
+	if (columnIndex === 3) {
+		return row[MERGE_OPTS_KEY].province;
+	}
+	if (columnIndex === 4) {
+		return row[MERGE_OPTS_KEY].city;
+	}
+	return [1, 1];
+}
+```
+
+#### 🌰 合并「 行 」 和 「 列 」
+
+> 1. 处理数据源
+
+```js
+import { CellMerger, Mode } from '@jinming6/merge-helper';
+
+async function getTableData() {
+	const { dataSource } = await fetch('../data/data.json').then((res) =>
+		res.json(),
+	);
+	const cellMerger = new CellMerger({
+		mode: Mode.RowCol,
+		dataSource,
+		mergeFields: this.columns.map((item) => {
+			if (item.prop === 'province') {
+				return {
+					field: 'province',
+					callback(curItem, nextItem) {
+						return (
+							curItem.name === nextItem.name &&
+							curItem.province === nextItem.province
+						);
+					},
+				};
+			}
+			return item.prop;
+		}),
+		genSort: true,
+		columns: this.columns,
+	});
+	this.allMergeData = cellMerger.getMergedData();
+}
+```
+
+> 2. 在el-table中传入合并后的`tableData`
+
+```html
+<el-table
+	border
+	:data="allMergeData"
+	:span-method="allMergeMethod"
+	header-cell-class-name="tableHeader"
+>
+	<el-table-column
+		:prop="SORT_NO_KEY"
+		label="序号"
+		width="100"
+		:align="align"
+	></el-table-column>
+	<el-table-column
+		v-for="columnItem in columns"
+		:key="columnItem.prop"
+		:prop="columnItem.prop"
+		:label="columnItem.label"
+		:align="align"
+	></el-table-column>
+</el-table>
+```
+
+> 3. 传入合并方法
+
+```js
+import { constants } from '@jinming6/merge-helper';
+const { MERGE_OPTS_KEY, SORT_NO_KEY } = constants;
+
+/**
+ * 提示：
+ * 根据合并后的值来处理
+ * row[MERGE_OPTS_KEY]中就是计算后得到的值
+ */
+function allMergeMethod({ row, column, columnIndex }) {
+	if (columnIndex === 0) {
+		return [row[MERGE_OPTS_KEY].name.rowspan, 1];
+	}
+	if (columnIndex === 1) {
+		return row[MERGE_OPTS_KEY].name;
+	}
+	if (columnIndex === 2) {
+		return row[MERGE_OPTS_KEY].age;
+	}
+	if (columnIndex === 3) {
+		return row[MERGE_OPTS_KEY].province;
+	}
+	if (columnIndex === 4) {
+		return row[MERGE_OPTS_KEY].city;
+	}
+	return [1, 1];
+}
+```
+
+## 📄 API
+
+### CellMerger
+
+#### 属性
+
+| 名称        | 类型                  | 必填 | 描述                       |
+| ----------- | --------------------- | ---- | -------------------------- |
+| dataSource  | Array                 | 是   | 数据源                     |
+| mergeFields | [Array](#mergefields) | 是   | 需要进行「行合并」的字段   |
+| genSort     | boolean               | 否   | 是否生成「行合并」后的序号 |
+| mode        | [Number](#属性)       | 是   | 合并模式                   |
+| columns     | [Array](#columns)     | 否   | 列头                       |
+
+### 方法
+
+| 名称          | 参数 | 描述             |
+| ------------- | ---- | ---------------- |
+| getMergedData | --   | 获取合并后的数据 |
+
+### mode
+
+#### 属性
+
+| 名称   | 值  | 描述       |
+| ------ | --- | ---------- |
+| Row    | 0   | 合并行     |
+| Col    | 1   | 合并列     |
+| RowCol | 2   | 合并行和列 |
+
+### mergeFields
+
+#### 属性
+
+| 名称     | 类型     | 必填 | 描述                         |
+| -------- | -------- | ---- | ---------------------------- |
+| field    | String   | 是   | 字段名称                     |
+| callback | Function | 是   | 自定义逻辑进行「行合并计算」 |
+
+### columns
+
+#### 属性
+
+| 名称 | 类型   | 必填 | 描述   |
+| ---- | ------ | ---- | ------ |
+| prop | String | 是   | 列字段 |

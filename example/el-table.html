@@ -6,61 +6,160 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        body {
+            padding: 0 20px;
+        }
+
+        .titleTag {
+            margin-bottom: 10px;
+        }
+
+        .tableHeader {
+            background-color: #f5f7fa !important;
+        }
+
+        .titleWrap {
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
     <div id="app">
-        <el-table border :data="tableData" :span-method="mergeMethod">
-            <el-table-column type="index" label="原始序号" width="100"></el-table-column>
-            <el-table-column :prop="SORT_NO_KEY" label="合并序号" width="100"></el-table-column>
-            <el-table-column prop="name" label="姓名"></el-table-column>
-            <el-table-column prop="age" label="年龄"></el-table-column>
-            <el-table-column prop="address" label="地址"></el-table-column>
-        </el-table>
+        <div class="titleWrap">
+            <el-link href="https://www.npmjs.com/package/@jinming6/merge-helper" target="_blank" type="primary"
+                class="link" :underline="false">
+                <h1>
+                    <i class="el-icon-magic-stick"></i>
+                    merge-helper 示例
+                </h1>
+            </el-link>
+        </div>
+        <h3><i class="el-icon-s-opportunity"></i>合并「 行 」</h3>
+        <el-row :gutter="gutter">
+            <el-col :span="span">
+                <el-alert title="原数据" type="info" :closable="false" class="titleTag" center show-icon></el-alert>
+                <el-table border :data="dataSource" header-cell-class-name="tableHeader">
+                    <el-table-column type="index" label="序号" width="100" :align="align"></el-table-column>
+                    <el-table-column v-for="columnItem in columns" :key="columnItem.prop" :prop="columnItem.prop"
+                        :label="columnItem.label" :align="align"></el-table-column>
+                </el-table>
+            </el-col>
+            <el-col :span="span">
+                <el-alert title="合并后" type="success" :closable="false" class="titleTag" center show-icon>
+                </el-alert>
+                <el-table border :data="tableData" :span-method="mergeMethod" header-cell-class-name="tableHeader">
+                    <el-table-column :prop="SORT_NO_KEY" label="序号" width="100" :align="align"></el-table-column>
+                    <el-table-column v-for="columnItem in columns" :key="columnItem.prop" :prop="columnItem.prop"
+                        :label="columnItem.label" :align="align"></el-table-column>
+                </el-table>
+            </el-col>
+        </el-row>
+        <el-divider></el-divider>
+        <h3><i class="el-icon-s-opportunity"></i>合并「 列 」</h3>
+        <el-row :gutter="gutter">
+            <el-col :span="span">
+                <el-alert title="原数据" type="info" :closable="false" class="titleTag" center show-icon></el-alert>
+                <el-table border :data="dataSource" header-cell-class-name="tableHeader">
+                    <el-table-column type="index" label="序号" width="100" :align="align"></el-table-column>
+                    <el-table-column v-for="columnItem in columns" :key="columnItem.prop" :prop="columnItem.prop"
+                        :label="columnItem.label" :align="align"></el-table-column>
+                </el-table>
+            </el-col>
+            <el-col :span="span">
+                <el-alert title="合并后" type="success" :closable="false" class="titleTag" center show-icon>
+                </el-alert>
+                <el-table border :data="colTableData" :span-method="colMergeMethod"
+                    header-cell-class-name="tableHeader">
+                    <el-table-column type="index" label="序号" width="100" :align="align"></el-table-column>
+                    <el-table-column v-for="columnItem in columns" :key="columnItem.prop" :prop="columnItem.prop"
+                        :label="columnItem.label" :align="align"></el-table-column>
+                </el-table>
+            </el-col>
+        </el-row>
+        <el-divider></el-divider>
+        <h3><i class="el-icon-s-opportunity"></i>合并「 行 」 和 「 列 」</h3>
+        <el-row :gutter="gutter">
+            <el-col :span="span">
+                <el-alert title="原数据" type="info" :closable="false" class="titleTag" center show-icon></el-alert>
+                <el-table border :data="dataSource" header-cell-class-name="tableHeader">
+                    <el-table-column type="index" label="序号" width="100" :align="align"></el-table-column>
+                    <el-table-column v-for="columnItem in columns" :key="columnItem.prop" :prop="columnItem.prop"
+                        :label="columnItem.label" :align="align"></el-table-column>
+                </el-table>
+            </el-col>
+            <el-col :span="span">
+                <el-alert title="合并后" type="success" :closable="false" class="titleTag" center show-icon>
+                </el-alert>
+                <el-table border :data="allMergeData" :span-method="allMergeMethod"
+                    header-cell-class-name="tableHeader">
+                    <el-table-column :prop="SORT_NO_KEY" label="序号" width="100" :align="align"></el-table-column>
+                    <el-table-column v-for="columnItem in columns" :key="columnItem.prop" :prop="columnItem.prop"
+                        :label="columnItem.label" :align="align"></el-table-column>
+                </el-table>
+            </el-col>
+        </el-row>
     </div>
 
     <script src="https://unpkg.com/vue@2.5.2/dist/vue.js"></script>
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <script src="../dist/mergeHelper.js"></script>
     <script>
-        const { constants, CellMerger } = window['@jinming6/mergeHelper']
+        const { constants, CellMerger, Mode } = window['@jinming6/mergeHelper']
         const { MERGE_OPTS_KEY, SORT_NO_KEY } = constants;
+
         const vm = new Vue({
             el: '#app',
             data() {
                 return {
+                    gutter: 20,
+                    span: 12,
+                    align: 'center',
+                    dataSource: [],
+                    columns: [],
                     tableData: [],
-                    SORT_NO_KEY
+                    SORT_NO_KEY,
+                    colTableData: [],
+                    allMergeData: [],
                 }
             },
             mounted() {
-                const data = this.getData()
-                const cellMerger = new CellMerger({
-                    dataSource: data,
-                    mergeFields: [{
-                        field: 'name',
-                        callback(curItem, nextItem) {
-                            return curItem.name === nextItem.name && curItem.address === nextItem.address
-                        }
-                    }, 'age', 'address'],
-                    genSort: true,
-                    sortBy: 'name'
-                })
-                this.tableData = cellMerger.getMergedData();
+                this.getDataSource()
+                this.getTableData()
+                this.getColMergeData()
+                this.getAllMergeData()
             },
             methods: {
-                getData() {
-                    const data = new Array(10).fill(0).map((_, index) => {
-                        const flag = index < 3
-                        return {
-                            name: flag ? 'John' : 'Bob',
-                            age: flag ? 28 : 18,
-                            address: '123 Main St'
-                        }
+                async getDataSource() {
+                    const { dataSource, columns } = await fetch('../data/data.json').then((res) => res.json())
+                    this.columns = columns;
+                    this.dataSource = dataSource;
+                },
+                async getTableData() {
+                    const { dataSource } = await fetch('../data/data.json').then((res) => res.json())
+                    const cellMerger = new CellMerger({
+                        mode: Mode.Row,
+                        dataSource,
+                        mergeFields: this.columns.map((item) => {
+                            if (item.prop === 'province') {
+                                return {
+                                    field: 'province',
+                                    callback(curItem, nextItem) {
+                                        return curItem.name === nextItem.name && curItem.province === nextItem.province
+                                    }
+                                }
+                            }
+                            return item.prop
+                        }),
+                        genSort: true,
                     })
-                    return data;
+                    this.tableData = cellMerger.getMergedData();
                 },
                 mergeMethod({ row, column, rowIndex, columnIndex }) {
+                    if (columnIndex === 0) {
+                        return [row[MERGE_OPTS_KEY].name.rowspan, 1]
+                    }
                     if (columnIndex === 1) {
                         return row[MERGE_OPTS_KEY].name
                     }
@@ -68,7 +167,75 @@
                         return row[MERGE_OPTS_KEY].age
                     }
                     if (columnIndex === 3) {
-                        return row[MERGE_OPTS_KEY].address
+                        return row[MERGE_OPTS_KEY].province
+                    }
+                    if (columnIndex === 4) {
+                        return row[MERGE_OPTS_KEY].city
+                    }
+                    return [1, 1]
+                },
+                async getColMergeData() {
+                    const { dataSource } = await fetch('../data/data.json').then((res) => res.json())
+                    const cellMerger = new CellMerger({
+                        mode: Mode.Col,
+                        dataSource,
+                        mergeFields: this.columns.map((item) => item.prop),
+                        genSort: true,
+                        columns: this.columns
+                    })
+                    this.colTableData = cellMerger.getMergedData()
+                },
+                colMergeMethod({ row, column, columnIndex }) {
+                    if (columnIndex === 1) {
+                        return row[MERGE_OPTS_KEY].name
+                    }
+                    if (columnIndex === 2) {
+                        return row[MERGE_OPTS_KEY].age
+                    }
+                    if (columnIndex === 3) {
+                        return row[MERGE_OPTS_KEY].province
+                    }
+                    if (columnIndex === 4) {
+                        return row[MERGE_OPTS_KEY].city
+                    }
+                    return [1, 1]
+                },
+                async getAllMergeData() {
+                    const { dataSource } = await fetch('../data/data.json').then((res) => res.json())
+                    const cellMerger = new CellMerger({
+                        mode: Mode.RowCol,
+                        dataSource,
+                        mergeFields: this.columns.map((item) => {
+                            if (item.prop === 'province') {
+                                return {
+                                    field: 'province',
+                                    callback(curItem, nextItem) {
+                                        return curItem.name === nextItem.name && curItem.province === nextItem.province
+                                    }
+                                }
+                            }
+                            return item.prop
+                        }),
+                        genSort: true,
+                        columns: this.columns
+                    })
+                    this.allMergeData = cellMerger.getMergedData()
+                },
+                allMergeMethod({ row, column, columnIndex }) {
+                    if (columnIndex === 0) {
+                        return [row[MERGE_OPTS_KEY].name.rowspan, 1]
+                    }
+                    if (columnIndex === 1) {
+                        return row[MERGE_OPTS_KEY].name
+                    }
+                    if (columnIndex === 2) {
+                        return row[MERGE_OPTS_KEY].age
+                    }
+                    if (columnIndex === 3) {
+                        return row[MERGE_OPTS_KEY].province
+                    }
+                    if (columnIndex === 4) {
+                        return row[MERGE_OPTS_KEY].city
                     }
                     return [1, 1]
                 },

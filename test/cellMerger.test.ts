@@ -1,7 +1,9 @@
 import { isNumber, isPlainObject, isString } from 'lodash';
 import { CellMerger } from '../src/cellMerge';
 import type { CellMergerOptions, DataSourceItem } from '../src/cellMerge/types';
-import { MERGE_OPTS_KEY, SORT_NO_KEY } from '../src/utils/constants';
+import { MERGE_OPTS_KEY, SORT_NO_KEY } from '../src/shared/constants';
+import data from '../data/data.json';
+import { Mode } from '../src';
 
 const validMergedData = (mergedData: DataSourceItem[]): boolean => {
 	const result = mergedData.every((item) => {
@@ -27,16 +29,9 @@ const validMergedDataSort = (
 };
 
 test('计算扁平数据-指定字段合并', () => {
-	const data = new Array(10).fill(0).map((_, index) => {
-		return {
-			id: index,
-			name: index > 4 ? '张三' : '李四',
-			age: index > 4 ? 18 : 20,
-			address: index > 4 ? '北京' : '上海',
-		};
-	});
 	const options: CellMergerOptions = {
-		dataSource: data,
+		mode: Mode.Row,
+		dataSource: data.dataSource,
 		mergeFields: ['name', 'age', 'address'],
 	};
 	const cellMerger = new CellMerger(options);
@@ -46,16 +41,9 @@ test('计算扁平数据-指定字段合并', () => {
 });
 
 test('计算扁平数据-指定字段对象合并', () => {
-	const data = new Array(10).fill(0).map((_, index) => {
-		return {
-			id: index,
-			name: index > 4 ? '张三' : '李四',
-			age: index > 4 ? 18 : 20,
-			address: index > 4 ? '北京' : '上海',
-		};
-	});
 	const options: CellMergerOptions = {
-		dataSource: data,
+		mode: Mode.Row,
+		dataSource: data.dataSource,
 		mergeFields: [
 			{
 				field: 'name',
@@ -74,22 +62,122 @@ test('计算扁平数据-指定字段对象合并', () => {
 });
 
 test('计算扁平数据-自动生成序号', () => {
-	const data = new Array(10).fill(0).map((_, index) => {
-		return {
-			id: index,
-			name: index > 4 ? '张三' : '李四',
-			age: index > 4 ? 18 : 20,
-			address: index > 4 ? '北京' : '上海',
-		};
-	});
 	const options: CellMergerOptions = {
-		dataSource: data,
+		mode: Mode.Row,
+		dataSource: data.dataSource,
 		mergeFields: ['name', 'age', 'address'],
 		genSort: true,
-		sortBy: 'name',
 	};
 	const cellMerger = new CellMerger(options);
 	const mergedData = cellMerger.getMergedData();
-	const result = validMergedDataSort(mergedData, options.sortBy);
+	const result = validMergedDataSort(mergedData, 'name');
+	expect(result).toEqual(true);
+});
+
+test('计算扁平数据-列合并', () => {
+	const options: CellMergerOptions = {
+		mode: Mode.Col,
+		dataSource: data.dataSource,
+		mergeFields: data.columns.map((item) => {
+			if (item.prop === 'province') {
+				return {
+					field: 'province',
+					callback(curItem, nextItem) {
+						return (
+							curItem.name === nextItem.name &&
+							curItem.province === nextItem.province
+						);
+					},
+				};
+			}
+			return item.prop;
+		}),
+		genSort: true,
+		columns: data.columns,
+	};
+	const cellMerger = new CellMerger(options);
+	const mergedData = cellMerger.getMergedData();
+
+	const arr: boolean[] = [];
+	mergedData.forEach((item, index) => {
+		let flag = false;
+		if (index < 3) {
+			flag =
+				item[MERGE_OPTS_KEY].name.rowspan === 1 &&
+				item[MERGE_OPTS_KEY].name.colspan === 1;
+		} else {
+			if (index === 3) {
+				flag =
+					item[MERGE_OPTS_KEY].name.rowspan === 1 &&
+					item[MERGE_OPTS_KEY].name.colspan === 2;
+			} else {
+				flag =
+					item[MERGE_OPTS_KEY].name.rowspan === 1 &&
+					item[MERGE_OPTS_KEY].name.colspan === 3;
+			}
+		}
+
+		arr.push(flag);
+	});
+
+	const result = !arr.includes(false);
+
+	expect(result).toEqual(true);
+});
+
+test('计算扁平数据-行列合并', () => {
+	const options: CellMergerOptions = {
+		mode: Mode.RowCol,
+		dataSource: data.dataSource,
+		mergeFields: data.columns.map((item) => {
+			if (item.prop === 'province') {
+				return {
+					field: 'province',
+					callback(curItem, nextItem) {
+						return (
+							curItem.name === nextItem.name &&
+							curItem.province === nextItem.province
+						);
+					},
+				};
+			}
+			return item.prop;
+		}),
+		genSort: true,
+		columns: data.columns,
+	};
+	const cellMerger = new CellMerger(options);
+	const mergedData = cellMerger.getMergedData();
+
+	const arr: boolean[] = [];
+	mergedData.forEach((item, index) => {
+		let flag = false;
+		if (index < 3) {
+			if (index === 0) {
+				flag =
+					item[MERGE_OPTS_KEY].name.rowspan === 3 &&
+					item[MERGE_OPTS_KEY].name.colspan === 1;
+			} else {
+				flag =
+					item[MERGE_OPTS_KEY].name.rowspan === 0 &&
+					item[MERGE_OPTS_KEY].name.colspan === 1;
+			}
+		} else {
+			if (index === 3) {
+				flag =
+					item[MERGE_OPTS_KEY].name.rowspan === 3 &&
+					item[MERGE_OPTS_KEY].name.colspan === 2;
+			} else {
+				flag =
+					item[MERGE_OPTS_KEY].name.rowspan === 0 &&
+					item[MERGE_OPTS_KEY].name.colspan === index - 2;
+			}
+		}
+
+		arr.push(flag);
+	});
+
+	const result = !arr.includes(false);
+
 	expect(result).toEqual(true);
 });

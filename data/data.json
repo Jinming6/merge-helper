@@ -1,0 +1,64 @@
+{
+	"dataSource": [
+		{
+			"id": 0,
+			"name": "张三",
+			"age": 18,
+			"province": "山东省",
+			"city": "青岛市"
+		},
+		{
+			"id": 1,
+			"name": "张三",
+			"age": 18,
+			"province": "山东省",
+			"city": "青岛市"
+		},
+		{
+			"id": 2,
+			"name": "张三",
+			"age": 18,
+			"province": "山东省",
+			"city": "青岛市"
+		},
+		{
+			"id": 3,
+			"name": "李四",
+			"age": "李四",
+			"province": "山东省",
+			"city": "临沂市"
+		},
+		{
+			"id": 4,
+			"name": "李四",
+			"age": "李四",
+			"province": "李四",
+			"city": "临沂市"
+		},
+		{
+			"id": 5,
+			"name": "李四",
+			"age": "李四",
+			"province": "李四",
+			"city": "日照市"
+		}
+	],
+	"columns": [
+		{
+			"label": "姓名",
+			"prop": "name"
+		},
+		{
+			"label": "年龄",
+			"prop": "age"
+		},
+		{
+			"label": "省",
+			"prop": "province"
+		},
+		{
+			"label": "市",
+			"prop": "city"
+		}
+	]
+}
