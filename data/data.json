@@ -32,15 +32,15 @@
 			"id": 4,
 			"name": "李四",
 			"age": "李四",
-			"province": "李四",
-			"city": "临沂市"
+			"province": "山西省",
+			"city": "太原市"
 		},
 		{
 			"id": 5,
 			"name": "李四",
 			"age": "李四",
-			"province": "李四",
-			"city": "日照市"
+			"province": "山西省",
+			"city": "大同市"
 		}
 	],
 	"columns": [

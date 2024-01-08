@@ -150,6 +150,14 @@
                                     }
                                 }
                             }
+                            if (item.prop === 'city') {
+                                return {
+                                    field: 'city',
+                                    callback(curItem, nextItem) {
+                                        return curItem.name === nextItem.name && curItem.province === nextItem.province && curItem.city === nextItem.city
+                                    }
+                                }
+                            }
                             return item.prop
                         }),
                         genSort: true,
@@ -211,6 +219,14 @@
                                     field: 'province',
                                     callback(curItem, nextItem) {
                                         return curItem.name === nextItem.name && curItem.province === nextItem.province
+                                    }
+                                }
+                            }
+                            if (item.prop === 'city') {
+                                return {
+                                    field: 'city',
+                                    callback(curItem, nextItem) {
+                                        return curItem.name === nextItem.name && curItem.province === nextItem.province && curItem.city === nextItem.city
                                     }
                                 }
                             }
