@@ -33,7 +33,7 @@ $ yarn add @jinming6/merge-helper
 ### npm
 
 ```bash
-$ npm add @jinming6/merge-helper
+$ npm i @jinming6/merge-helper
 ```
 
 ### CDN
