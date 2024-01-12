@@ -147,7 +147,7 @@ function mergeMethod({ row, column, rowIndex, columnIndex }) {
 | dataSource  | Array                 | 是   | 数据源                     |
 | mergeFields | [Array](#mergefields) | 是   | 需要进行「行合并」的字段   |
 | genSort     | boolean               | 否   | 是否生成「行合并」后的序号 |
-| mode        | [Number](#属性)       | 是   | 合并模式                   |
+| mode        | [Number](#mode)       | 是   | 合并模式                   |
 | columns     | [Array](#columns)     | 否   | 列头                       |
 
 ### 方法
