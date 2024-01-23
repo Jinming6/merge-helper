@@ -1,24 +1,24 @@
 # merge-helper
 
-[English](./README-EN.md)
+[简体中文](./README-CN.md)
 
-轻松处理单元格的合并
+Easily handle cell merges
 
 ![截屏2024-01-07 23.44.15.png](https://s2.loli.net/2024/01/07/rqlRbZgUt6TD3xk.png)
 
-[更多示例](./example/el-table.html)
+[More examples](./example/el-table.html)
 
-## 🎨 特性
+## 🎨 Features
 
-- [x] 只合并`行`
-- [x] 自定义条件进行`行合并`
-- [x] 生成`行合并`后的序号
-- [x] 只合并`列`
-- [x] 合并`行`和`列`
+- [x] Merge `rows` only
+- [x] Customize conditions for `row merging`
+- [x] Generate sequential numbers after `row merging`
+- [x] Merge `columns` only
+- [x] Merge both `rows` and `columns`
 
-## ⚙️ 安装
+## ⚙️ Installation
 
-🔔 提示： 使用前，请安装`lodash`。
+🔔 Note: Before using, please install `lodash`.
 
 ### pnpm
 
@@ -44,11 +44,11 @@ $ npm i @jinming6/merge-helper
 <script src="https://unpkg.com/@jinming6/merge-helper/dist/mergeHelper.min.js"></script>
 ```
 
-### 🏄 快速上手
+### 🏄 Quick Start
 
-#### 🌰 合并「 行 」
+> Merge "Rows"
 
-> 1. 处理数据源
+1. Process the data source
 
 ```js
 import { CellMerger, Mode } from '@jinming6/merge-helper';
@@ -80,7 +80,7 @@ async function getTableData() {
 }
 ```
 
-> 2. 在el-table中传入合并后的`tableData`
+2. Pass the `merged tableData` into the el-table component.
 
 ```html
 <el-table
@@ -105,16 +105,16 @@ async function getTableData() {
 </el-table>
 ```
 
-> 3. 传入合并方法
+3. Pass the merge method.
 
 ```js
 import { constants } from '@jinming6/merge-helper';
 const { MERGE_OPTS_KEY, SORT_NO_KEY } = constants;
 
 /**
- * 提示：
- * 根据合并后的值来处理
- * row[MERGE_OPTS_KEY]中就是计算后得到的值
+ * Note:
+ * Process based on the merged values.
+ * The value in row[MERGE_OPTS_KEY] represents the computed result.
  */
 function mergeMethod({ row, column, rowIndex, columnIndex }) {
 	if (columnIndex === 0) {
@@ -140,45 +140,45 @@ function mergeMethod({ row, column, rowIndex, columnIndex }) {
 
 ### CellMerger
 
-#### 属性
+#### Properties
 
-| 名称        | 类型                  | 必填 | 描述                       |
-| ----------- | --------------------- | ---- | -------------------------- |
-| dataSource  | Array                 | 是   | 数据源                     |
-| mergeFields | [Array](#mergefields) | 是   | 需要进行「行合并」的字段   |
-| genSort     | boolean               | 否   | 是否生成「行合并」后的序号 |
-| mode        | [Number](#mode)       | 是   | 合并模式                   |
-| columns     | [Array](#columns)     | 否   | 列头                       |
+| Name        | Type                  | Required | Description                                                |
+| ----------- | --------------------- | -------- | ---------------------------------------------------------- |
+| dataSource  | Array                 | Yes      | Data source                                                |
+| mergeFields | [Array](#mergefields) | Yes      | Fields for "row merging"                                   |
+| genSort     | boolean               | No       | Whether to generate sequential numbers after "row merging" |
+| mode        | [Number](#mode)       | Yes      | Merging mode                                               |
+| columns     | [Array](#columns)     | No       | Column headers                                             |
 
-### 方法
+### Methods
 
-| 名称          | 参数 | 描述             |
-| ------------- | ---- | ---------------- |
-| getMergedData | --   | 获取合并后的数据 |
+| Name          | Parameters | Description     |
+| ------------- | ---------- | --------------- |
+| getMergedData | --         | Get merged data |
 
 ### mode
 
-#### 属性
+#### Properties
 
-| 名称   | 值  | 描述       |
-| ------ | --- | ---------- |
-| Row    | 0   | 合并行     |
-| Col    | 1   | 合并列     |
-| RowCol | 2   | 合并行和列 |
+| Name   | Value | Description            |
+| ------ | ----- | ---------------------- |
+| Row    | 0     | Merge rows             |
+| Col    | 1     | Merge columns          |
+| RowCol | 2     | Merge rows and columns |
 
 ### mergeFields
 
-#### 属性
+#### Properties
 
-| 名称     | 类型     | 必填 | 描述                         |
-| -------- | -------- | ---- | ---------------------------- |
-| field    | String   | 是   | 字段名称                     |
-| callback | Function | 是   | 自定义逻辑进行「行合并计算」 |
+| Name     | Type     | Required | Description                    |
+| -------- | -------- | -------- | ------------------------------ |
+| field    | String   | Yes      | Field name                     |
+| callback | Function | Yes      | Custom logic for "row merging" |
 
 ### columns
 
-#### 属性
+#### Properties
 
-| 名称 | 类型   | 必填 | 描述   |
-| ---- | ------ | ---- | ------ |
-| prop | String | 是   | 列字段 |
+| Name | Type   | Required | Description  |
+| ---- | ------ | -------- | ------------ |
+| prop | String | Yes      | Column field |
