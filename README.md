@@ -83,12 +83,7 @@ async function getTableData() {
 2. Pass the `merged tableData` into the el-table component.
 
 ```html
-<el-table
-	border
-	:data="tableData"
-	:span-method="mergeMethod"
-	header-cell-class-name="tableHeader"
->
+<el-table border :data="tableData" :span-method="mergeMethod">
 	<el-table-column
 		:prop="SORT_NO_KEY"
 		label="序号"
