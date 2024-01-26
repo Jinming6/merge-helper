@@ -7,7 +7,8 @@
 		"build": "rollup --config rollup.config.ts --configPlugin typescript",
 		"dev": "rollup --watch --config rollup.config.ts --configPlugin typescript",
 		"prepare": "husky install",
-		"commit": "cz"
+		"commit": "cz",
+		"release": "semantic-release"
 	},
 	"keywords": [
 		"merge",
@@ -21,6 +22,8 @@
 		"@rollup/plugin-node-resolve": "^15.2.3",
 		"@rollup/plugin-terser": "^0.4.4",
 		"@rollup/plugin-typescript": "^11.1.5",
+		"@semantic-release/changelog": "^6.0.3",
+		"@semantic-release/git": "^10.0.1",
 		"@types/jest": "^29.5.11",
 		"@types/lodash": "^4.14.202",
 		"@typescript-eslint/eslint-plugin": "^6.4.0",
@@ -36,6 +39,7 @@
 		"lint-staged": "^15.2.0",
 		"prettier": "3.1.1",
 		"rollup": "^4.8.0",
+		"semantic-release": "^23.0.0",
 		"ts-jest": "^29.1.1",
 		"tslib": "^2.6.2",
 		"typescript": "^5.3.3"
@@ -54,5 +58,28 @@
 		"commitizen": {
 			"path": "./node_modules/cz-conventional-changelog"
 		}
+	},
+	"release": {
+		"branches": [
+			"main"
+		],
+		"plugins": [
+			"@semantic-release/commit-analyzer",
+			"@semantic-release/release-notes-generator",
+			[
+				"@semantic-release/changelog",
+				{
+					"changelogFile": "docs/CHANGELOG.md"
+				}
+			],
+			[
+				"@semantic-release/git",
+				{
+					"assets": [
+						"docs/CHANGELOG.md"
+					]
+				}
+			]
+		]
 	}
 }
