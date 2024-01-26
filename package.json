@@ -1,13 +1,13 @@
 {
 	"name": "@jinming6/merge-helper",
 	"version": "1.1.2",
+	"description": "Easily handle cell merges",
 	"main": "dist/mergeHelper.js",
 	"scripts": {
 		"test": "jest",
 		"build": "rollup --config rollup.config.ts --configPlugin typescript",
 		"dev": "rollup --watch --config rollup.config.ts --configPlugin typescript",
 		"prepare": "husky install",
-		"commit": "cz",
 		"release": "semantic-release"
 	},
 	"keywords": [
