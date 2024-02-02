@@ -1,6 +1,11 @@
 import { MERGE_OPTS_KEY } from './constants';
-import type { FieldSpan } from '../cellMerge/types';
+import type {
+  CellMergerOptions,
+  DataSourceItem,
+  FieldSpan,
+} from '../cellMerge/types';
 import { isPlainObject } from 'lodash';
+import { CellMerger } from '../cellMerge';
 
 /**
  * 获取字段合并配置
@@ -22,4 +27,12 @@ export function getFieldSpan(
     return defaultSpanValue;
   }
   return fieldSpan;
+}
+
+/**
+ * 获取合并后的数据
+ */
+export function getMergedData(options: CellMergerOptions): DataSourceItem[] {
+  const instance = new CellMerger(options);
+  return instance.getMergedData();
 }

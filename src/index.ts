@@ -1,6 +1,6 @@
 import { CellMerger } from './cellMerge';
 import * as constants from './shared/constants';
 import { Mode } from './shared/enums';
-import { getFieldSpan } from './shared/helpers';
+import { getFieldSpan, getMergedData } from './shared/helpers';
 
-export { CellMerger, constants, Mode, getFieldSpan };
+export { CellMerger, constants, Mode, getFieldSpan, getMergedData };
