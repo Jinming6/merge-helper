@@ -41,7 +41,7 @@ $ npm i @jinming6/merge-helper
 
 ### 🏄 Quick Start
 
-> Merge " Rows "
+#### Merge " Rows "
 
 ```html
 <template>

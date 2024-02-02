@@ -41,7 +41,7 @@ $ npm i @jinming6/merge-helper
 
 ### 🏄 快速上手
 
-> 合并 " 行 "
+#### 合并 " 行 "
 
 ```html
 <template>
