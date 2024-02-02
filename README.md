@@ -18,23 +18,18 @@ Easily handle cell merges
 
 ## ⚙️ Installation
 
-🔔 Note: Before using, please install `lodash`.
+Note: Before using, please install [lodash](https://lodash.com)
 
-### pnpm
+### Package management tool
 
 ```bash
+# pnpm
 $ pnpm add @jinming6/merge-helper
-```
 
-### yarn
-
-```bash
+# yarn
 $ yarn add @jinming6/merge-helper
-```
 
-### npm
-
-```bash
+# npm
 $ npm i @jinming6/merge-helper
 ```
 
@@ -46,134 +41,176 @@ $ npm i @jinming6/merge-helper
 
 ### 🏄 Quick Start
 
-> Merge "Rows"
-
-1. Process the data source
-
-```js
-import { CellMerger, Mode } from '@jinming6/merge-helper';
-
-async function getTableData() {
-  const { dataSource } = await fetch('../data/data.json').then((res) =>
-    res.json(),
-  );
-  const cellMerger = new CellMerger({
-    mode: Mode.Row,
-    dataSource,
-    mergeFields: this.columns.map((item) => {
-      if (item.prop === 'province') {
-        return {
-          field: 'province',
-          callback(curItem, nextItem) {
-            return (
-              curItem.name === nextItem.name &&
-              curItem.province === nextItem.province
-            );
-          },
-        };
-      }
-      return item.prop;
-    }),
-    genSort: true,
-  });
-  this.tableData = cellMerger.getMergedData();
-}
-```
-
-2. Pass the `merged tableData` into the el-table component.
+> Merge " Rows "
 
 ```html
-<el-table border :data="tableData" :span-method="mergeMethod">
-  <el-table-column
-    :prop="SORT_NO_KEY"
-    label="序号"
-    width="100"
-    :align="align"
-  ></el-table-column>
-  <el-table-column
-    v-for="columnItem in columns"
-    :key="columnItem.prop"
-    :prop="columnItem.prop"
-    :label="columnItem.label"
-    :align="align"
-  ></el-table-column>
-</el-table>
-```
+<template>
+  <el-table border :data="tableData" :span-method="mergeMethod">
+    <el-table-column :prop="SORT_NO_KEY" label="Index"></el-table-column>
+    <el-table-column prop="province" label="Province"></el-table-column>
+  </el-table>
+</template>
 
-3. Pass the merge method.
+<script>
+  import {
+    getMergedData,
+    Mode,
+    SORT_NO_KEY,
+    getFieldSpan,
+  } from '@jinming6/merge-helper';
 
-```js
-import { constants } from '@jinming6/merge-helper';
-const { MERGE_OPTS_KEY, SORT_NO_KEY } = constants;
-
-/**
- * Note:
- * Process based on the merged values.
- * The value in row[MERGE_OPTS_KEY] represents the computed result.
- */
-function mergeMethod({ row, column, rowIndex, columnIndex }) {
-  if (columnIndex === 0) {
-    return [row[MERGE_OPTS_KEY].name.rowspan, 1];
-  }
-  if (columnIndex === 1) {
-    return row[MERGE_OPTS_KEY].name;
-  }
-  if (columnIndex === 2) {
-    return row[MERGE_OPTS_KEY].age;
-  }
-  if (columnIndex === 3) {
-    return row[MERGE_OPTS_KEY].province;
-  }
-  if (columnIndex === 4) {
-    return row[MERGE_OPTS_KEY].city;
-  }
-  return [1, 1];
-}
+  export default {
+    data() {
+      return {
+        SORT_NO_KEY,
+        tableData: [],
+      };
+    },
+    mounted() {
+      this.getTableData();
+    },
+    methods: {
+      /**
+       * Get table data
+       */
+      async getTableData() {
+        const { dataSource } = await fetch('../data/data.json').then((res) =>
+          res.json(),
+        );
+        // or: const mergeFields = ['province']
+        // If the province is the same as the next row, the rowspan is added, and the process is iterated down.
+        const mergeFields = [
+          {
+            field: 'province',
+            callback(curItem, nextItem) {
+              return (
+                curItem.name === nextItem.name &&
+                curItem.province === nextItem.province
+              );
+            },
+          },
+        ];
+        const options = {
+          mode: Mode.Row,
+          dataSource,
+          mergeFields,
+          genSort: true,
+        };
+        this.tableData = getMergedData(options);
+      },
+      /**
+       * Table merge logic
+       */
+      mergeMethod({ row, columnIndex }) {
+        if (columnIndex === 1) {
+          return getFieldSpan(row, 'province');
+        }
+        return {
+          rowspan: 1,
+          colspan: 1,
+        };
+      },
+    },
+  };
+</script>
 ```
 
 ## 📄 API
 
-### CellMerger
+1. [CellMerger](#cellmerger-parameter)
+2. [getMergedData](#getmergeddata)
+3. [getFieldSpan](#getfieldspan)
 
-#### Properties
+### CellMerger parameter
 
-| Name        | Type                  | Required | Description                                                |
-| ----------- | --------------------- | -------- | ---------------------------------------------------------- |
-| dataSource  | Array                 | Yes      | Data source                                                |
-| mergeFields | [Array](#mergefields) | Yes      | Fields for "row merging"                                   |
-| genSort     | boolean               | No       | Whether to generate sequential numbers after "row merging" |
-| mode        | [Number](#mode)       | Yes      | Merging mode                                               |
-| columns     | [Array](#columns)     | No       | Column headers                                             |
+| Name        | Type                            | Required | Description                                             |
+| ----------- | ------------------------------- | -------- | ------------------------------------------------------- |
+| dataSource  | Array                           | yes      | data source                                             |
+| mergeFields | [Array](#mergefields-parameter) | yes      | Fields that need to be "row merged"                     |
+| genSort     | boolean                         | no       | Whether to generate the sequence number after Row Merge |
+| mode        | [Number](#mode-parameter)       | yes      | Merge mode                                              |
+| columns     | [Array](#columns-parameter)     | no       | columns                                                 |
 
-### Methods
+### CellMerger method
 
-| Name          | Parameters | Description     |
-| ------------- | ---------- | --------------- |
-| getMergedData | --         | Get merged data |
+| Name          | Type | Description         |
+| ------------- | ---- | ------------------- |
+| getMergedData | --   | Get the merged data |
 
-### mode
+### mode parameter
 
-#### Properties
+| Name   | Type | Description            |
+| ------ | ---- | ---------------------- |
+| Row    | 0    | Merge rows             |
+| Col    | 1    | Merge columns          |
+| RowCol | 2    | Merge rows and columns |
 
-| Name   | Value | Description            |
-| ------ | ----- | ---------------------- |
-| Row    | 0     | Merge rows             |
-| Col    | 1     | Merge columns          |
-| RowCol | 2     | Merge rows and columns |
+### mergeFields parameter
 
-### mergeFields
+| Name     | Type     | Required | Description                               |
+| -------- | -------- | -------- | ----------------------------------------- |
+| field    | String   | yes      | field name                                |
+| callback | Function | yes      | Custom logic for "row merge calculations" |
 
-#### Properties
-
-| Name     | Type     | Required | Description                    |
-| -------- | -------- | -------- | ------------------------------ |
-| field    | String   | Yes      | Field name                     |
-| callback | Function | Yes      | Custom logic for "row merging" |
-
-### columns
-
-#### Properties
+### columns parameter
 
 | Name | Type   | Required | Description  |
 | ---- | ------ | -------- | ------------ |
-| prop | String | Yes      | Column field |
+| prop | String | yes      | column field |
+
+### getMergedData parameter
+
+Same as [CellMerger parameter](#cellmerger-parameter)
+
+### Utilities
+
+#### getMergedData
+
+Get the merged data
+
+```js
+import { getMergedData, Mode } from '@jinming6/merge-helper';
+
+const options = {
+  mode: Mode.Row,
+  dataSource: [
+    { province: 'shandong province', name: 'John' },
+    { province: 'shandong province', name: 'John' },
+    { province: 'Jiangsu province', name: 'peace' },
+  ],
+  mergeFields: [
+    {
+      field: 'province',
+      callback(curItem, nextItem) {
+        // Customize merge conditions
+        return (
+          curItem.name === nextItem.name &&
+          curItem.province === nextItem.province
+        );
+      },
+    },
+  ],
+  genSort: true,
+};
+const mergeData = getMergedData(options);
+```
+
+#### getFieldSpan
+
+Gets the field merge configuration
+
+```js
+import { getFieldSpan } from '@jinming6/merge-helper';
+
+const spanMethod = ({ row, columnIndex }) => {
+  // Merge column 1 by province
+  if (columnIndex === 0) {
+    return getFieldSpan(row, 'province');
+  }
+  // Or return [1, 1]
+  return {
+    rowspan: 1,
+    colspan: 1,
+  };
+};
+```

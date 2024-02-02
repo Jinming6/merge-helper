@@ -18,23 +18,18 @@
 
 ## ⚙️ 安装
 
-🔔 提示： 使用前，请安装`lodash`。
+提示： 使用前，请安装 [lodash](https://lodash.com)
 
-### pnpm
+### 包管理工具
 
 ```bash
+# pnpm
 $ pnpm add @jinming6/merge-helper
-```
 
-### yarn
-
-```bash
+# yarn
 $ yarn add @jinming6/merge-helper
-```
 
-### npm
-
-```bash
+# npm
 $ npm i @jinming6/merge-helper
 ```
 
@@ -48,112 +43,101 @@ $ npm i @jinming6/merge-helper
 
 > 合并 " 行 "
 
-1. 处理数据源
-
-```js
-import { CellMerger, Mode } from '@jinming6/merge-helper';
-
-async function getTableData() {
-	const { dataSource } = await fetch('../data/data.json').then((res) =>
-		res.json(),
-	);
-	const cellMerger = new CellMerger({
-		mode: Mode.Row,
-		dataSource,
-		mergeFields: this.columns.map((item) => {
-			if (item.prop === 'province') {
-				return {
-					field: 'province',
-					callback(curItem, nextItem) {
-						return (
-							curItem.name === nextItem.name &&
-							curItem.province === nextItem.province
-						);
-					},
-				};
-			}
-			return item.prop;
-		}),
-		genSort: true,
-	});
-	this.tableData = cellMerger.getMergedData();
-}
-```
-
-2. 在el-table中传入合并后的`tableData`
-
 ```html
-<el-table border :data="tableData" :span-method="mergeMethod">
-	<el-table-column
-		:prop="SORT_NO_KEY"
-		label="序号"
-		width="100"
-		:align="align"
-	></el-table-column>
-	<el-table-column
-		v-for="columnItem in columns"
-		:key="columnItem.prop"
-		:prop="columnItem.prop"
-		:label="columnItem.label"
-		:align="align"
-	></el-table-column>
-</el-table>
-```
+<template>
+  <el-table border :data="tableData" :span-method="mergeMethod">
+    <el-table-column :prop="SORT_NO_KEY" label="序号"></el-table-column>
+    <el-table-column prop="province" label="省份"></el-table-column>
+  </el-table>
+</template>
 
-3. 传入合并方法
+<script>
+  import {
+    getMergedData,
+    Mode,
+    SORT_NO_KEY,
+    getFieldSpan,
+  } from '@jinming6/merge-helper';
 
-```js
-import { constants } from '@jinming6/merge-helper';
-const { MERGE_OPTS_KEY, SORT_NO_KEY } = constants;
-
-/**
- * 提示：
- * 根据合并后的值来处理
- * row[MERGE_OPTS_KEY]中就是计算后得到的值
- */
-function mergeMethod({ row, column, rowIndex, columnIndex }) {
-	if (columnIndex === 0) {
-		return [row[MERGE_OPTS_KEY].name.rowspan, 1];
-	}
-	if (columnIndex === 1) {
-		return row[MERGE_OPTS_KEY].name;
-	}
-	if (columnIndex === 2) {
-		return row[MERGE_OPTS_KEY].age;
-	}
-	if (columnIndex === 3) {
-		return row[MERGE_OPTS_KEY].province;
-	}
-	if (columnIndex === 4) {
-		return row[MERGE_OPTS_KEY].city;
-	}
-	return [1, 1];
-}
+  export default {
+    data() {
+      return {
+        SORT_NO_KEY,
+        tableData: [],
+      };
+    },
+    mounted() {
+      this.getTableData();
+    },
+    methods: {
+      /**
+       * 获取表格数据
+       */
+      async getTableData() {
+        const { dataSource } = await fetch('../data/data.json').then((res) =>
+          res.json(),
+        );
+        // 或者 const mergeFields = ['province']
+        // 如果与下一行的 province 相同，则累加 rowspan ，依次往下循环处理。
+        const mergeFields = [
+          {
+            field: 'province',
+            callback(curItem, nextItem) {
+              return (
+                curItem.name === nextItem.name &&
+                curItem.province === nextItem.province
+              );
+            },
+          },
+        ];
+        const options = {
+          mode: Mode.Row,
+          dataSource,
+          mergeFields,
+          genSort: true,
+        };
+        this.tableData = getMergedData(options);
+      },
+      /**
+       * 表格合并逻辑
+       */
+      mergeMethod({ row, columnIndex }) {
+        if (columnIndex === 1) {
+          return getFieldSpan(row, 'province');
+        }
+        return {
+          rowspan: 1,
+          colspan: 1,
+        };
+      },
+    },
+  };
+</script>
 ```
 
 ## 📄 API
 
-### CellMerger
+1. [CellMerger](#cellmerger-属性)
+2. [getMergedData](#getmergeddata)
+3. [getFieldSpan](#getfieldspan)
 
-#### 属性
+### CellMerger 属性
 
-| 名称        | 类型                  | 必填 | 描述                       |
-| ----------- | --------------------- | ---- | -------------------------- |
-| dataSource  | Array                 | 是   | 数据源                     |
-| mergeFields | [Array](#mergefields) | 是   | 需要进行「行合并」的字段   |
-| genSort     | boolean               | 否   | 是否生成「行合并」后的序号 |
-| mode        | [Number](#mode)       | 是   | 合并模式                   |
-| columns     | [Array](#columns)     | 否   | 列头                       |
+| 名称        | 类型                       | 必填 | 描述                       |
+| ----------- | -------------------------- | ---- | -------------------------- |
+| dataSource  | Array                      | 是   | 数据源                     |
+| mergeFields | [Array](#mergefields-属性) | 是   | 需要进行「行合并」的字段   |
+| genSort     | boolean                    | 否   | 是否生成「行合并」后的序号 |
+| mode        | [Number](#mode-属性)       | 是   | 合并模式                   |
+| columns     | [Array](#columns-属性)     | 否   | 列头                       |
 
-### 方法
+### CellMerger 方法
 
 | 名称          | 参数 | 描述             |
 | ------------- | ---- | ---------------- |
 | getMergedData | --   | 获取合并后的数据 |
 
-### mode
-
-#### 属性
+### mode 属性
 
 | 名称   | 值  | 描述       |
 | ------ | --- | ---------- |
@@ -161,19 +145,74 @@ function mergeMethod({ row, column, rowIndex, columnIndex }) {
 | Col    | 1   | 合并列     |
 | RowCol | 2   | 合并行和列 |
 
-### mergeFields
-
-#### 属性
+### mergeFields 属性
 
 | 名称     | 类型     | 必填 | 描述                         |
 | -------- | -------- | ---- | ---------------------------- |
 | field    | String   | 是   | 字段名称                     |
 | callback | Function | 是   | 自定义逻辑进行「行合并计算」 |
 
-### columns
-
-#### 属性
+### columns 属性
 
 | 名称 | 类型   | 必填 | 描述   |
 | ---- | ------ | ---- | ------ |
 | prop | String | 是   | 列字段 |
+
+### getMergedData 属性
+
+同 [CellMerger 属性](#cellmerger-属性)
+
+### 工具函数
+
+#### getMergedData
+
+获取合并后的数据
+
+```js
+import { getMergedData, Mode } from '@jinming6/merge-helper';
+
+// 属性配置
+const options = {
+  mode: Mode.Row,
+  dataSource: [
+    { province: '山东省', name: '张三' },
+    { province: '山东省', name: '张三' },
+    { province: '江苏省', name: '李四' },
+  ],
+  mergeFields: [
+    {
+      field: 'province',
+      callback(curItem, nextItem) {
+        // 自定义合并条件
+        return (
+          curItem.name === nextItem.name &&
+          curItem.province === nextItem.province
+        );
+      },
+    },
+  ],
+  genSort: true,
+};
+// 合并后的数据
+const mergeData = getMergedData(options);
+```
+
+#### getFieldSpan
+
+获取字段合并配置
+
+```js
+import { getFieldSpan } from '@jinming6/merge-helper';
+
+const spanMethod = ({ row, columnIndex }) => {
+  // 将第1列按照省份进行合并
+  if (columnIndex === 0) {
+    return getFieldSpan(row, 'province');
+  }
+  // 或者输出 [1, 1]
+  return {
+    rowspan: 1,
+    colspan: 1,
+  };
+};
+```
