@@ -11,10 +11,12 @@
 <body>
     <div id="app">
         <el-table border :data="tableData" :span-method="spanMethod">
-            <el-table-column label="序号" :prop="SORT_NO_KEY"></el-table-column>
+            <el-table-column label="序号" :prop="SORT_NO_KEY" width="80"></el-table-column>
             <el-table-column label="姓名" prop="name"></el-table-column>
             <el-table-column label="年龄" prop="age"></el-table-column>
             <el-table-column label="省份" prop="provinces"></el-table-column>
+            <el-table-column label="市" prop="city"></el-table-column>
+            <el-table-column label="区/县" prop="county"></el-table-column>
         </el-table>
     </div>
 
@@ -36,22 +38,30 @@
                         {
                             name: '张三',
                             age: 18,
-                            provinces: '山东省'
+                            provinces: '山东省',
+                            city: '青岛市',
+                            county: '崂山区'
                         },
                         {
                             name: '张三',
-                            age: 18,
-                            provinces: '山东省'
-                        },
-                        {
-                            name: '李四',
-                            age: 18,
-                            provinces: '山东省'
+                            age: 20,
+                            provinces: '北京市',
+                            city: '北京市',
+                            county: '北京市'
                         },
                         {
                             name: '王五',
-                            age: 20,
-                            provinces: '江苏省'
+                            age: 22,
+                            provinces: '江苏省',
+                            city: '南京市',
+                            county: '雨花台区'
+                        },
+                        {
+                            name: '马六',
+                            age: 22,
+                            provinces: '上海市',
+                            city: '上海市',
+                            county: '上海市'
                         },
                     ]
                     const options = {
