@@ -8,7 +8,6 @@ import type {
 } from './types';
 import {
   FIRST_ID,
-  IS_FIRST,
   MERGE_OPTS_KEY,
   ROW_KEY,
   SORT_NO_KEY,
@@ -22,6 +21,8 @@ export class CellMerger {
   mergeFields: MergeFields;
   // 是否生成序号
   genSort: boolean;
+  // 按照指定字段的维度进行排序
+  sortBy: CellMergerOptions['sortBy'];
   // 唯一key
   rowKey: string;
   // 表格列
@@ -37,6 +38,7 @@ export class CellMerger {
       rowKey = ROW_KEY,
       columns = [],
       mode,
+      sortBy,
     } = options;
     this.mode = mode;
     this.dataSource = cloneDeep(dataSource);
@@ -44,11 +46,13 @@ export class CellMerger {
     this.genSort = genSort ?? false;
     this.rowKey = rowKey;
     this.columns = columns;
+    this.sortBy = isString(sortBy)
+      ? sortBy
+      : this.getFirstMergeField(this.mergeFields);
     this.initMergeOpts(this.dataSource, this.mergeFields);
     if (this.mode === Mode.Row || this.mode === Mode.RowCol) {
       this.mergeCells(this.dataSource);
-    }
-    if (this.mode === Mode.Col || this.mode === Mode.RowCol) {
+    } else if (this.mode === Mode.Col || this.mode === Mode.RowCol) {
       this.mergeCols(this.dataSource, this.columns);
     }
   }
@@ -117,7 +121,7 @@ export class CellMerger {
       if (this.isMergedCell(item, field)) {
         continue;
       }
-      if (this.genSort) {
+      if (this.genSort && this.sortBy === field) {
         item[SORT_NO_KEY] = startNo;
       }
       for (let j = i + 1; j < dataSource.length; j++) {
@@ -129,14 +133,14 @@ export class CellMerger {
         ) {
           item[MERGE_OPTS_KEY][field].rowspan += 1;
           nextItem[MERGE_OPTS_KEY][field].rowspan = 0;
-          item[IS_FIRST] = true;
-          nextItem[IS_FIRST] = false;
           nextItem[FIRST_ID] = item[this.rowKey];
         } else {
           break;
         }
       }
-      startNo += 1;
+      if (this.sortBy === field) {
+        startNo += 1;
+      }
     }
   }
 
@@ -194,5 +198,20 @@ export class CellMerger {
    */
   getMergedData(): DataSourceItem[] {
     return this.dataSource;
+  }
+
+  /**
+   * 获取第一个合并的列字段
+   */
+  getFirstMergeField(
+    mergeFields: CellMergerOptions['mergeFields'],
+  ): string | null {
+    const elem = mergeFields[0];
+    if (isString(elem)) {
+      return elem;
+    } else if (isPlainObject(elem)) {
+      return elem.field;
+    }
+    return null;
   }
 }

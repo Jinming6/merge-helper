@@ -14,6 +14,7 @@ export interface CellMergerOptions {
   rowKey?: string;
   columns?: ColumnItem[];
   mode: Mode;
+  sortBy?: string | null;
 }
 
 export type DataSourceItem = Record<string, any>;
