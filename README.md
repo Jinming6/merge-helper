@@ -123,13 +123,14 @@ $ npm i @jinming6/merge-helper
 
 ### CellMerger parameter
 
-| Name        | Type                            | Required | Description                                             |
-| ----------- | ------------------------------- | -------- | ------------------------------------------------------- |
-| dataSource  | Array                           | yes      | data source                                             |
-| mergeFields | [Array](#mergefields-parameter) | yes      | Fields that need to be "row merged"                     |
-| genSort     | boolean                         | no       | Whether to generate the sequence number after Row Merge |
-| mode        | [Number](#mode-parameter)       | yes      | Merge mode                                              |
-| columns     | [Array](#columns-parameter)     | no       | columns                                                 |
+| Name        | Type                            | Required | Description                                                                                       |
+| ----------- | ------------------------------- | -------- | ------------------------------------------------------------------------------------------------- |
+| dataSource  | Array                           | yes      | data source                                                                                       |
+| mergeFields | [Array](#mergefields-parameter) | yes      | Fields that need to be "row merged"                                                               |
+| genSort     | Boolean                         | no       | Whether to generate the sequence number after Row Merge                                           |
+| sortBy      | String                          | no       | Sort the calculation by the latitude of the field. (The default is the first item of mergeFiedls) |
+| mode        | [Number](#mode-parameter)       | yes      | Merge mode                                                                                        |
+| columns     | [Array](#columns-parameter)     | no       | columns                                                                                           |
 
 ### CellMerger method
 

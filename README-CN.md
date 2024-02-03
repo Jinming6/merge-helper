@@ -123,13 +123,14 @@ $ npm i @jinming6/merge-helper
 
 ### CellMerger 属性
 
-| 名称        | 类型                       | 必填 | 描述                       |
-| ----------- | -------------------------- | ---- | -------------------------- |
-| dataSource  | Array                      | 是   | 数据源                     |
-| mergeFields | [Array](#mergefields-属性) | 是   | 需要进行「行合并」的字段   |
-| genSort     | boolean                    | 否   | 是否生成「行合并」后的序号 |
-| mode        | [Number](#mode-属性)       | 是   | 合并模式                   |
-| columns     | [Array](#columns-属性)     | 否   | 列头                       |
+| 名称        | 类型                       | 必填 | 描述                                                    |
+| ----------- | -------------------------- | ---- | ------------------------------------------------------- |
+| dataSource  | Array                      | 是   | 数据源                                                  |
+| mergeFields | [Array](#mergefields-属性) | 是   | 需要进行「行合并」的字段                                |
+| genSort     | Boolean                    | 否   | 是否生成「行合并」后的序号                              |
+| sortBy      | String                     | 否   | 按照该字段的纬度进行排序。（默认取mergeFields的第一项） |
+| mode        | [Number](#mode-属性)       | 是   | 合并模式                                                |
+| columns     | [Array](#columns-属性)     | 否   | 列头                                                    |
 
 ### CellMerger 方法
 
