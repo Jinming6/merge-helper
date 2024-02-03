@@ -1,4 +1,10 @@
-import { cloneDeep, isString, isPlainObject, isFunction } from 'lodash';
+import {
+  cloneDeep,
+  isString,
+  isPlainObject,
+  isFunction,
+  isBoolean,
+} from 'lodash';
 import type {
   CellMergerOptions,
   ColumnItem,
@@ -16,19 +22,19 @@ import { Mode } from '../shared/enums';
 
 export class CellMerger {
   // 数据源
-  dataSource: DataSourceItem[];
+  dataSource: CellMergerOptions['dataSource'];
   // 需要合并的字段
-  mergeFields: MergeFields;
+  mergeFields: CellMergerOptions['mergeFields'];
   // 是否生成序号
-  genSort: boolean;
+  genSort: CellMergerOptions['genSort'];
   // 按照指定字段的维度进行排序
   sortBy: CellMergerOptions['sortBy'];
   // 唯一key
-  rowKey: string;
+  rowKey: CellMergerOptions['rowKey'];
   // 表格列
-  columns: ColumnItem[];
+  columns: CellMergerOptions['columns'];
   // 模式
-  mode: Mode = Mode.Row;
+  mode: CellMergerOptions['mode'] = Mode.Row;
 
   constructor(options: CellMergerOptions) {
     const {
@@ -50,9 +56,12 @@ export class CellMerger {
       ? sortBy
       : this.getFirstMergeField(this.mergeFields);
     this.initMergeOpts(this.dataSource, this.mergeFields);
-    if (this.mode === Mode.Row || this.mode === Mode.RowCol) {
+    if (this.mode === Mode.Row) {
       this.mergeCells(this.dataSource);
-    } else if (this.mode === Mode.Col || this.mode === Mode.RowCol) {
+    } else if (this.mode === Mode.Col) {
+      this.mergeCols(this.dataSource, this.columns);
+    } else if (this.mode === Mode.RowCol) {
+      this.mergeCells(this.dataSource);
       this.mergeCols(this.dataSource, this.columns);
     }
   }
@@ -121,7 +130,7 @@ export class CellMerger {
       if (this.isMergedCell(item, field)) {
         continue;
       }
-      if (this.genSort && this.sortBy === field) {
+      if (isBoolean(this.genSort) && this.sortBy === field) {
         item[SORT_NO_KEY] = startNo;
       }
       for (let j = i + 1; j < dataSource.length; j++) {
@@ -133,7 +142,7 @@ export class CellMerger {
         ) {
           item[MERGE_OPTS_KEY][field].rowspan += 1;
           nextItem[MERGE_OPTS_KEY][field].rowspan = 0;
-          nextItem[FIRST_ID] = item[this.rowKey];
+          nextItem[FIRST_ID] = isString(this.rowKey) ? item[this.rowKey] : null;
         } else {
           break;
         }
