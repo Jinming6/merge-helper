@@ -24,6 +24,10 @@
         Mode[Mode["RowCol"] = 2] = "RowCol";
     })(exports.Mode || (exports.Mode = {}));
 
+    function warn(msg) {
+        console.warn(`[${"@jinming6/merge-helper"} warn] ${msg}`);
+    }
+
     /**
      * 获取字段合并配置
      */
@@ -106,6 +110,10 @@
      * 获取第一个合并的列字段
      */
     function getFirstMergeField(mergeFields) {
+        if (mergeFields.length < 1) {
+            warn('mergeFields should not be empty');
+            return null;
+        }
         const elem = mergeFields[0];
         if (lodash.isString(elem)) {
             return elem;
@@ -114,10 +122,6 @@
             return elem.field;
         }
         return null;
-    }
-
-    function warn(msg) {
-        console.warn(`[${"@jinming6/merge-helper"} warn] ${msg}`);
     }
 
     class CellMerger {
@@ -141,7 +145,7 @@
             else if (this.mode === exports.Mode.Col) {
                 console.log('columns', this.columns);
                 if (this.columns.length < 1) {
-                    warn('columns 不能为空');
+                    warn('columns should not be empty');
                 }
                 this.mergeCols(this.dataSource, this.columns);
             }
