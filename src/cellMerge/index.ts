@@ -63,7 +63,7 @@ export class CellMerger {
     } else if (this.mode === Mode.Col) {
       console.log('columns', this.columns);
       if (this.columns.length < 1) {
-        warn('columns 不能为空');
+        warn('columns should not be empty');
       }
       this.mergeCols(this.dataSource, this.columns);
     } else if (this.mode === Mode.RowCol) {

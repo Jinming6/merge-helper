@@ -7,6 +7,7 @@ import type {
 import { cloneDeep, isArray, isPlainObject, isString } from 'lodash';
 import { CellMerger } from '../cellMerge';
 import { type SplitIntoFragmentsOpts } from './types';
+import { warn } from './warning';
 
 /**
  * 获取字段合并配置
@@ -103,6 +104,10 @@ export function splitIntoFragments(
 export function getFirstMergeField(
   mergeFields: CellMergerOptions['mergeFields'],
 ): string | null {
+  if (mergeFields.length < 1) {
+    warn('mergeFields should not be empty');
+    return null;
+  }
   const elem = mergeFields[0];
   if (isString(elem)) {
     return elem;
