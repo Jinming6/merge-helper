@@ -20,6 +20,7 @@
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-replace": "^5.0.5",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.5",
     "@semantic-release/changelog": "^6.0.3",
@@ -46,6 +47,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "dotenv": "^16.4.1",
     "lodash": "^4.17.21"
   },
   "lint-staged": {

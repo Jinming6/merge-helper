@@ -19,6 +19,8 @@ import {
   SORT_NO_KEY,
 } from '../shared/constants';
 import { Mode } from '../shared/enums';
+import { getFirstMergeField } from '../shared/helpers';
+import { warn } from '../shared/warning';
 
 export class CellMerger {
   // 数据源
@@ -54,11 +56,15 @@ export class CellMerger {
     this.columns = columns;
     this.sortBy = isString(sortBy)
       ? sortBy
-      : this.getFirstMergeField(this.mergeFields);
+      : getFirstMergeField(this.mergeFields);
     this.initMergeOpts(this.dataSource, this.mergeFields);
     if (this.mode === Mode.Row) {
       this.mergeCells(this.dataSource);
     } else if (this.mode === Mode.Col) {
+      console.log('columns', this.columns);
+      if (this.columns.length < 1) {
+        warn('columns 不能为空');
+      }
       this.mergeCols(this.dataSource, this.columns);
     } else if (this.mode === Mode.RowCol) {
       this.mergeCells(this.dataSource);
@@ -207,20 +213,5 @@ export class CellMerger {
    */
   getMergedData(): DataSourceItem[] {
     return this.dataSource;
-  }
-
-  /**
-   * 获取第一个合并的列字段
-   */
-  getFirstMergeField(
-    mergeFields: CellMergerOptions['mergeFields'],
-  ): string | null {
-    const elem = mergeFields[0];
-    if (isString(elem)) {
-      return elem;
-    } else if (isPlainObject(elem)) {
-      return elem.field;
-    }
-    return null;
   }
 }
