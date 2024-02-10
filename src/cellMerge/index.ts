@@ -19,7 +19,7 @@ import {
   SORT_NO_KEY,
 } from '../shared/constants';
 import { Mode } from '../shared/enums';
-import { getFirstMergeField } from '../shared/helpers';
+import { getFirstMergeField, isValueInEnum } from '../shared/helpers';
 import { warn } from '../shared/warning';
 
 export class CellMerger {
@@ -36,7 +36,7 @@ export class CellMerger {
   // 表格列
   columns: CellMergerOptions['columns'];
   // 模式
-  mode: CellMergerOptions['mode'] = Mode.Row;
+  mode: CellMergerOptions['mode'];
 
   constructor(options: CellMergerOptions) {
     const {
@@ -48,7 +48,7 @@ export class CellMerger {
       mode,
       sortBy,
     } = options;
-    this.mode = mode;
+    this.mode = isValueInEnum(mode, Mode) ? mode : Mode.Row;
     this.dataSource = cloneDeep(dataSource);
     this.mergeFields = cloneDeep(mergeFields);
     this.genSort = genSort ?? false;

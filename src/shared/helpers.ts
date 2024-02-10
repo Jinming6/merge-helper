@@ -104,6 +104,10 @@ export function splitIntoFragments(
 export function getFirstMergeField(
   mergeFields: CellMergerOptions['mergeFields'],
 ): string | null {
+  if (!isArray(mergeFields)) {
+    warn('mergeFields should be an array');
+    return null;
+  }
   if (mergeFields.length < 1) {
     warn('mergeFields should not be empty');
     return null;
@@ -115,4 +119,14 @@ export function getFirstMergeField(
     return elem.field;
   }
   return null;
+}
+
+/**
+ * 判断是否属于枚举值
+ */
+export function isValueInEnum<T>(
+  value: T,
+  enumObj: Record<string, T>,
+): boolean {
+  return Object.values(enumObj).includes(value);
 }
