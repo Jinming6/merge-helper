@@ -1,6 +1,6 @@
 # merge-helper
 
-[简体中文](./README-CN.md)
+[简体中文](https://jinming6.github.io/plugins/merge-helper.html)
 
 Easily handle cell merges
 
