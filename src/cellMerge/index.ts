@@ -61,9 +61,13 @@ export class CellMerger {
     if (this.mode === Mode.Row) {
       this.mergeCells(this.dataSource);
     } else if (this.mode === Mode.Col) {
-      console.log('columns', this.columns);
       if (this.columns.length < 1) {
         warn('columns should not be empty');
+        return;
+      }
+      if (this.mergeFields.length !== this.columns.length) {
+        warn('mergeFields.length should be equal to columns.length');
+        return;
       }
       this.mergeCols(this.dataSource, this.columns);
     } else if (this.mode === Mode.RowCol) {

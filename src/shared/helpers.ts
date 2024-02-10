@@ -44,7 +44,7 @@ export function getMergedData(options: CellMergerOptions): DataSourceItem[] {
  */
 export function splitIntoFragments(
   options: SplitIntoFragmentsOpts,
-): DataSourceItem[] {
+): DataSourceItem[][] {
   const { dataSource, pageSize, mergeFields, mode, genSort, sortBy, columns } =
     options;
   const copyData = cloneDeep(dataSource);

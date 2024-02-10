@@ -6,8 +6,6 @@ Easily handle cell merges
 
 ![截屏2024-01-07 23.44.15.png](https://s2.loli.net/2024/01/07/rqlRbZgUt6TD3xk.png)
 
-[More examples](./example/el-table.html)
-
 ## 🎨 Features
 
 - [x] Merge `rows` only
