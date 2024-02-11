@@ -1,6 +1,6 @@
 # merge-helper
 
-[简体中文](https://jinming6.github.io/plugins/merge-helper.html)
+[Documentation](https://jinming6.github.io/plugins/merge-helper.html)
 
 Easily handle cell merges
 
@@ -111,105 +111,4 @@ $ npm i @jinming6/merge-helper
     },
   };
 </script>
-```
-
-## 📄 API
-
-1. [CellMerger](#cellmerger-parameter)
-2. [getMergedData](#getmergeddata)
-3. [getFieldSpan](#getfieldspan)
-
-### CellMerger parameter
-
-| Name        | Type                            | Required | Description                                                                                       |
-| ----------- | ------------------------------- | -------- | ------------------------------------------------------------------------------------------------- |
-| dataSource  | Array                           | yes      | data source                                                                                       |
-| mergeFields | [Array](#mergefields-parameter) | yes      | Fields that need to be "row merged"                                                               |
-| genSort     | Boolean                         | no       | Whether to generate the sequence number after Row Merge                                           |
-| sortBy      | String                          | no       | Sort the calculation by the latitude of the field. (The default is the first item of mergeFiedls) |
-| mode        | [Number](#mode-parameter)       | yes      | Merge mode                                                                                        |
-| columns     | [Array](#columns-parameter)     | no       | columns                                                                                           |
-
-### CellMerger method
-
-| Name          | Type | Description         |
-| ------------- | ---- | ------------------- |
-| getMergedData | --   | Get the merged data |
-
-### mode parameter
-
-| Name   | Type | Description            |
-| ------ | ---- | ---------------------- |
-| Row    | 0    | Merge rows             |
-| Col    | 1    | Merge columns          |
-| RowCol | 2    | Merge rows and columns |
-
-### mergeFields parameter
-
-| Name     | Type     | Required | Description                               |
-| -------- | -------- | -------- | ----------------------------------------- |
-| field    | String   | yes      | field name                                |
-| callback | Function | yes      | Custom logic for "row merge calculations" |
-
-### columns parameter
-
-| Name | Type   | Required | Description  |
-| ---- | ------ | -------- | ------------ |
-| prop | String | yes      | column field |
-
-### getMergedData parameter
-
-Same as [CellMerger parameter](#cellmerger-parameter)
-
-### Utilities
-
-#### getMergedData
-
-Get the merged data
-
-```js
-import { getMergedData, Mode } from '@jinming6/merge-helper';
-
-const options = {
-  mode: Mode.Row,
-  dataSource: [
-    { province: 'shandong province', name: 'John' },
-    { province: 'shandong province', name: 'John' },
-    { province: 'Jiangsu province', name: 'peace' },
-  ],
-  mergeFields: [
-    {
-      field: 'province',
-      callback(curItem, nextItem) {
-        // Customize merge conditions
-        return (
-          curItem.name === nextItem.name &&
-          curItem.province === nextItem.province
-        );
-      },
-    },
-  ],
-  genSort: true,
-};
-const mergeData = getMergedData(options);
-```
-
-#### getFieldSpan
-
-Gets the field merge configuration
-
-```js
-import { getFieldSpan } from '@jinming6/merge-helper';
-
-const spanMethod = ({ row, columnIndex }) => {
-  // Merge column 1 by province
-  if (columnIndex === 0) {
-    return getFieldSpan(row, 'province');
-  }
-  // Or return [1, 1]
-  return {
-    rowspan: 1,
-    colspan: 1,
-  };
-};
 ```
