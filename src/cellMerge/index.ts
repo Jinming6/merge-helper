@@ -4,6 +4,7 @@ import {
   isPlainObject,
   isFunction,
   isBoolean,
+  isArray,
 } from 'lodash';
 import type {
   CellMergerOptions,
@@ -19,7 +20,12 @@ import {
   SORT_NO_KEY,
 } from '../shared/constants';
 import { Mode } from '../shared/enums';
-import { getFirstMergeField, isValueInEnum } from '../shared/helpers';
+import {
+  getFirstMergeField,
+  isValueInEnum,
+  validateColumns,
+  validateMergeFields,
+} from '../shared/helpers';
 import { warn } from '../shared/warning';
 
 export class CellMerger {
@@ -54,6 +60,10 @@ export class CellMerger {
     this.genSort = genSort ?? false;
     this.rowKey = rowKey;
     this.columns = columns;
+    if (!isArray(this.mergeFields)) {
+      warn('mergeFields should be an array');
+      return;
+    }
     this.sortBy = isString(sortBy)
       ? sortBy
       : getFirstMergeField(this.mergeFields);
@@ -61,17 +71,33 @@ export class CellMerger {
     if (this.mode === Mode.Row) {
       this.mergeCells(this.dataSource);
     } else if (this.mode === Mode.Col) {
-      if (this.columns.length < 1) {
-        warn('columns should not be empty');
+      const validCol = validateColumns(columns);
+      if (!validCol) {
         return;
       }
-      if (this.mergeFields.length !== this.columns.length) {
-        warn('mergeFields.length should be equal to columns.length');
+      const validMergeFields = validateMergeFields(
+        this.mergeFields,
+        this.columns,
+        this.mode,
+      );
+      if (!validMergeFields) {
         return;
       }
       this.mergeCols(this.dataSource, this.columns);
     } else if (this.mode === Mode.RowCol) {
       this.mergeCells(this.dataSource);
+      const validCol = validateColumns(columns);
+      if (!validCol) {
+        return;
+      }
+      const validMergeFields = validateMergeFields(
+        this.mergeFields,
+        this.columns,
+        this.mode,
+      );
+      if (!validMergeFields) {
+        return;
+      }
       this.mergeCols(this.dataSource, this.columns);
     }
   }
@@ -83,7 +109,8 @@ export class CellMerger {
     mergeFields.forEach((fieldItem) => {
       const field = isString(fieldItem) ? fieldItem : fieldItem.field;
       if (!isString(field)) {
-        throw new Error('field 必须是一个字符串');
+        warn('field should be a string');
+        return;
       }
       dataSource.forEach((item) => {
         if (!isPlainObject(item[MERGE_OPTS_KEY])) {

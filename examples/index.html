@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/element-plus/dist/index.css"
+    />
+  </head>
+
+  <body>
+    <div id="app">
+      <el-radio-group v-model="mode" @change="getTableData">
+        <el-radio :label="Mode.Row" size="large">行</el-radio>
+        <el-radio :label="Mode.Col" size="large">列</el-radio>
+        <el-radio :label="Mode.RowCol" size="large">行 + 列</el-radio>
+      </el-radio-group>
+      <el-table
+        :data="tableData"
+        style="width: 100%"
+        :span-method="spanMethod"
+        border
+      >
+        <el-table-column
+          v-if="mode === Mode.Col"
+          label="序号"
+          type="index"
+          width="80"
+        ></el-table-column>
+        <el-table-column
+          v-else
+          label="序号"
+          :prop="SORT_NO_KEY"
+          width="80"
+        ></el-table-column>
+        <el-table-column
+          v-for="item in columns"
+          :prop="item.prop"
+          :label="item.label"
+        ></el-table-column>
+      </el-table>
+    </div>
+
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://unpkg.com/element-plus"></script>
+    <script src="https://unpkg.com/lodash@4.17.21/lodash.js"></script>
+    <script src="../dist/mergeHelper.js"></script>
+    <script>
+      const { createApp, ref, onMounted } = Vue;
+      const { Mode, getMergedData, getFieldSpan, constants } =
+        window['@jinming6/mergeHelper'];
+      const { SORT_NO_KEY } = constants;
+
+      const app = createApp({
+        setup() {
+          const mode = ref(Mode.Row);
+          const columns = [
+            { prop: 'name', label: '姓名' },
+            { prop: 'address', label: '地址' },
+            { prop: 'date', label: '日期' },
+          ];
+          const tableData = ref([]);
+          const getTableData = () => {
+            const dataSource = [
+              {
+                date: '2016-05-01',
+                name: 'Tom',
+                address: 'No. 189, Grove St, Los Angeles',
+              },
+              {
+                date: '2016-05-01',
+                name: 'Tom',
+                address: 'Tom',
+              },
+              {
+                date: '2016-05-02',
+                name: 'Tom',
+                address: 'No. 189, Grove St, Los Angeles',
+              },
+              {
+                date: '2016-05-03',
+                name: 'Tom',
+                address: 'No. 189, Grove St, Los Angeles',
+              },
+            ];
+            const options = {
+              mode: mode.value,
+              dataSource,
+              mergeFields: [
+                {
+                  field: 'name',
+                  callback(curItem, nextItem) {
+                    return curItem.name === nextItem.name;
+                  },
+                },
+                'date',
+              ],
+              genSort: true,
+            };
+            if ([Mode.Col, Mode.RowCol].includes(mode.value)) {
+              options.columns = columns.map((item) => ({ prop: item.prop }));
+              options.mergeFields = columns.map((item) => item.prop);
+            }
+            const mergedData = getMergedData(options);
+            console.log(mergedData, options);
+            tableData.value = mergedData;
+          };
+
+          const spanMethod = ({ row, column }) => {
+            if (column.property === SORT_NO_KEY) {
+              return getFieldSpan(row, 'name');
+            }
+            return getFieldSpan(row, column.property);
+          };
+
+          onMounted(() => {
+            getTableData();
+          });
+
+          return {
+            mode,
+            tableData,
+            Mode,
+            spanMethod,
+            getTableData,
+            columns,
+            SORT_NO_KEY,
+          };
+        },
+      });
+
+      app.use(ElementPlus);
+
+      app.mount('#app');
+    </script>
+  </body>
+</html>

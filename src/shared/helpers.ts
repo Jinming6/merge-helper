@@ -8,6 +8,7 @@ import { cloneDeep, isArray, isPlainObject, isString } from 'lodash';
 import { CellMerger } from '../cellMerge';
 import { type SplitIntoFragmentsOpts } from './types';
 import { warn } from './warning';
+import { Mode } from './enums';
 
 /**
  * 获取字段合并配置
@@ -129,4 +130,53 @@ export function isValueInEnum<T>(
   enumObj: Record<string, T>,
 ): boolean {
   return Object.values(enumObj).includes(value);
+}
+
+/**
+ * 校验列数据
+ */
+export function validateColumns(
+  columns: CellMergerOptions['columns'],
+): boolean {
+  if (!isArray(columns)) {
+    warn('columns should be an array');
+    return false;
+  }
+  if (columns.length < 1) {
+    warn('columns should not be empty');
+    return false;
+  }
+  const flag = columns.every(
+    (item) => isPlainObject(item) && isString(item.prop),
+  );
+  if (!flag) {
+    warn('columns should be an array of plain objects with prop');
+    return false;
+  }
+  return true;
+}
+
+/**
+ * 校验列合并字段
+ */
+export function validateMergeFields(
+  mergeFields: CellMergerOptions['mergeFields'],
+  columns: CellMergerOptions['columns'],
+  mode: CellMergerOptions['mode'],
+): boolean {
+  if (!isArray(mergeFields)) {
+    warn('mergeFields should be an array');
+    return false;
+  }
+  if ([Mode.Col, Mode.RowCol].includes(mode)) {
+    const validCols = validateColumns(columns);
+    if (!validCols) {
+      return false;
+    }
+    if (mergeFields.length !== columns?.length ?? 0) {
+      warn('mergeFields.length should be equal to columns.length');
+      return false;
+    }
+  }
+  return true;
 }
