@@ -1,20 +1,18 @@
 # merge-helper
 
-[Documentation](https://jinming6.github.io/plugins/merge-helper.html)
+[Documentation ( 中文 )](https://jinming6.github.io/plugins/merge-helper.html)
 
 Easily handle cell merges
 
 ![截屏2024-01-07 23.44.15.png](https://s2.loli.net/2024/01/07/rqlRbZgUt6TD3xk.png)
 
-## 🎨 Features
+## Features
 
-- [x] Merge `rows` only
-- [x] Customize conditions for `row merging`
-- [x] Generate sequential numbers after `row merging`
-- [x] Merge `columns` only
-- [x] Merge both `rows` and `columns`
+- [x] Merge `rows` and `columns`
+- [x] Generates the merged sequence number
+- [x] data fractionation
 
-## ⚙️ Installation
+## Installation
 
 Note: Before using, please install [lodash](https://lodash.com)
 
@@ -37,9 +35,9 @@ $ npm i @jinming6/merge-helper
 <script src="https://unpkg.com/@jinming6/merge-helper/dist/mergeHelper.min.js"></script>
 ```
 
-### 🏄 Quick Start
+### Quick Start
 
-#### Merge " Rows "
+#### Merge Rows
 
 ```html
 <template>
