@@ -49,6 +49,7 @@ export default {
     nodeResolve(),
     replace({
       'process.env.PACKAGE_NAME': JSON.stringify(process.env.PACKAGE_NAME),
+      preventAssignment: true,
     }),
   ],
   external: ['lodash'],

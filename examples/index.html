@@ -29,12 +29,9 @@
           type="index"
           width="80"
         ></el-table-column>
-        <el-table-column
-          v-else
-          label="序号"
-          :prop="SORT_NO_KEY"
-          width="80"
-        ></el-table-column>
+        <el-table-column v-else label="序号" width="80">
+          <template #default="{ row }"> {{ getSortNo(row) }} </template>
+        </el-table-column>
         <el-table-column
           v-for="item in columns"
           :prop="item.prop"
@@ -49,9 +46,8 @@
     <script src="../dist/mergeHelper.js"></script>
     <script>
       const { createApp, ref, onMounted } = Vue;
-      const { Mode, getMergedData, getFieldSpan, constants } =
+      const { Mode, getMergedData, getFieldSpan, constants, getSortNo } =
         window['@jinming6/mergeHelper'];
-      const { SORT_NO_KEY } = constants;
 
       const app = createApp({
         setup() {
@@ -108,8 +104,8 @@
             tableData.value = mergedData;
           };
 
-          const spanMethod = ({ row, column }) => {
-            if (column.property === SORT_NO_KEY) {
+          const spanMethod = ({ row, column, columnIndex }) => {
+            if (columnIndex === 0) {
               return getFieldSpan(row, 'name');
             }
             return getFieldSpan(row, column.property);
@@ -126,7 +122,7 @@
             spanMethod,
             getTableData,
             columns,
-            SORT_NO_KEY,
+            getSortNo,
           };
         },
       });

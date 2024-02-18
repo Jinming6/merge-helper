@@ -2,10 +2,11 @@ import { CellMerger } from './cellMerge';
 import * as constants from './shared/constants';
 import { Mode } from './shared/enums';
 import {
-  getFieldSpan,
   getMergedData,
   splitIntoFragments,
-} from './shared/helpers';
+  getSortNo,
+  getFieldSpan,
+} from './api';
 
 export {
   CellMerger,
@@ -14,4 +15,5 @@ export {
   getFieldSpan,
   getMergedData,
   splitIntoFragments,
+  getSortNo,
 };
