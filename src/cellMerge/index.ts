@@ -161,28 +161,30 @@ export class CellMerger {
     if (!isString(field)) {
       return;
     }
+    let preItem: DataSourceItem | undefined;
     let startNo = 1;
     for (let i = 0; i < dataSource.length; i++) {
       const item = dataSource[i];
-      if (this.isMergedCell(item, field)) {
-        continue;
-      }
       if (isBoolean(this.genSort) && this.sortBy === field) {
         item[SORT_NO_KEY] = startNo;
       }
-      for (let j = i + 1; j < dataSource.length; j++) {
-        const nextItem = dataSource[j];
-        if (
-          isFunction(condition)
-            ? condition(item, nextItem)
-            : item[field] === nextItem[field]
-        ) {
-          item[MERGE_OPTS_KEY][field].rowspan += 1;
-          nextItem[MERGE_OPTS_KEY][field].rowspan = 0;
-          nextItem[FIRST_ID] = isString(this.rowKey) ? item[this.rowKey] : null;
-        } else {
-          break;
-        }
+      if (preItem == null) {
+        preItem = item;
+        continue;
+      }
+      if (this.isMergedCell(item, field)) {
+        continue;
+      }
+      if (
+        isFunction(condition)
+          ? condition(preItem, item)
+          : preItem[field] === item[field]
+      ) {
+        preItem[MERGE_OPTS_KEY][field].rowspan += 1;
+        item[MERGE_OPTS_KEY][field].rowspan = 0;
+        item[FIRST_ID] = isString(this.rowKey) ? preItem[this.rowKey] : null;
+      } else {
+        preItem = item;
       }
       if (this.sortBy === field) {
         startNo += 1;
@@ -196,45 +198,45 @@ export class CellMerger {
   mergeCols(dataSource: DataSourceItem[], columns: ColumnItem[]): void {
     if (columns.length < 1 || dataSource.length < 1) return;
     const dataSourceLen = dataSource.length;
-    const columnsLen = columns.length;
     // 遍历数据源
     for (let i = 0; i < dataSourceLen; i++) {
       const curItem = dataSource[i];
-      for (let j = 0; j < columnsLen; j++) {
-        // 当前列
-        const curColumn = columns[j];
-        if (curColumn.prop === SORT_NO_KEY) {
-          continue;
-        }
-        if (curItem[curColumn.prop] == null) {
-          continue;
-        }
-        // 如果当前列的colspan为0，则跳过
-        if (curItem[MERGE_OPTS_KEY][curColumn.prop].colspan === 0) {
-          continue;
-        }
-        for (let k = j + 1; k < columnsLen; k++) {
-          // 下一列
-          const nextColumn = columns[k];
-          if (nextColumn.prop === SORT_NO_KEY) {
-            break;
-          }
-          // 如果是空值，则跳过
-          if (curItem[nextColumn.prop] == null) {
-            break;
-          }
-          // 否则，就累加colspan
-          if (
-            curItem[curColumn.prop] === curItem[nextColumn.prop] &&
-            curItem[MERGE_OPTS_KEY][curColumn.prop].rowspan ===
-              curItem[MERGE_OPTS_KEY][nextColumn.prop].rowspan
-          ) {
-            curItem[MERGE_OPTS_KEY][curColumn.prop].colspan += 1;
-            curItem[MERGE_OPTS_KEY][nextColumn.prop].colspan = 0;
-          } else {
-            break;
-          }
-        }
+      this.mergeColByField(curItem, columns);
+    }
+  }
+
+  /**
+   * 根据「列字段」进行合并计算
+   */
+  mergeColByField(curItem: DataSourceItem, columns: ColumnItem[]): void {
+    const columnsLen = columns.length;
+    let preColumn: ColumnItem | undefined;
+    for (let j = 0; j < columnsLen; j++) {
+      // 当前列
+      const curColumn = columns[j];
+      if (preColumn == null) {
+        preColumn = curColumn;
+        continue;
+      }
+      if (curColumn.prop === SORT_NO_KEY) {
+        continue;
+      }
+      if (curItem[curColumn.prop] == null) {
+        continue;
+      }
+      // 如果当前列的colspan为0，则跳过
+      if (curItem[MERGE_OPTS_KEY][curColumn.prop].colspan === 0) {
+        continue;
+      }
+      if (
+        curItem[preColumn.prop] === curItem[curColumn.prop] &&
+        curItem[MERGE_OPTS_KEY][preColumn.prop].rowspan ===
+          curItem[MERGE_OPTS_KEY][curColumn.prop].rowspan
+      ) {
+        curItem[MERGE_OPTS_KEY][preColumn.prop].colspan += 1;
+        curItem[MERGE_OPTS_KEY][curColumn.prop].colspan = 0;
+      } else {
+        break;
       }
     }
   }
