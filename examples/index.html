@@ -100,13 +100,14 @@
               options.mergeFields = columns.map((item) => item.prop);
             }
             const mergedData = getMergedData(options);
-            console.log(mergedData, options);
             tableData.value = mergedData;
           };
 
           const spanMethod = ({ row, column, columnIndex }) => {
             if (columnIndex === 0) {
-              return getFieldSpan(row, 'name');
+              return mode.value === Mode.Col
+                ? { rowspan: 1, colspan: 1 }
+                : getFieldSpan(row, 'name');
             }
             return getFieldSpan(row, column.property);
           };
