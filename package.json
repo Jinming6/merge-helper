@@ -1,6 +1,6 @@
 {
   "name": "@jinming6/merge-helper",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Easily handle cell merges",
   "main": "dist/mergeHelper.js",
   "scripts": {
