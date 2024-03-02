@@ -207,7 +207,6 @@ export class CellMerger {
 
   /**
    * 根据「列字段」进行合并计算
-   * TODO 列合并存在bug
    */
   mergeColByField(curItem: DataSourceItem, columns: ColumnItem[]): void {
     const columnsLen = columns.length;
