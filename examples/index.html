@@ -8,6 +8,11 @@
       rel="stylesheet"
       href="https://unpkg.com/element-plus/dist/index.css"
     />
+    <style type="text/css">
+      .discord {
+        text-decoration: line-through;
+      }
+    </style>
   </head>
 
   <body>
@@ -15,7 +20,9 @@
       <el-radio-group v-model="mode" @change="getTableData">
         <el-radio :label="Mode.Row" size="large">行</el-radio>
         <el-radio :label="Mode.Col" size="large">列</el-radio>
-        <el-radio :label="Mode.RowCol" size="large">行 + 列</el-radio>
+        <el-radio class="discord" :label="Mode.RowCol" size="large"
+          >行 + 列 (废弃)</el-radio
+        >
       </el-radio-group>
       <el-table
         :data="tableData"
@@ -61,24 +68,28 @@
           const getTableData = () => {
             const dataSource = [
               {
-                date: '2016-05-01',
-                name: 'Tom',
-                address: 'No. 189, Grove St, Los Angeles',
+                id: 0,
+                date: '2024-03-10',
+                name: '张三',
+                address: '山东省青岛市',
               },
               {
-                date: '2016-05-01',
-                name: 'Tom',
-                address: 'Tom',
+                id: 1,
+                date: '2024-03-11',
+                name: '张三',
+                address: '张三',
               },
               {
-                date: '2016-05-02',
-                name: 'Tom',
-                address: 'No. 189, Grove St, Los Angeles',
+                id: 2,
+                date: '2024-03-12',
+                name: '张三',
+                address: '山东省青岛市',
               },
               {
-                date: '2016-05-03',
-                name: 'Tom',
-                address: 'No. 189, Grove St, Los Angeles',
+                id: 3,
+                date: '2024-03-13',
+                name: '张三',
+                address: '山东省青岛市',
               },
             ];
             const options = {
@@ -91,6 +102,7 @@
                     return curItem.name === nextItem.name;
                   },
                 },
+                'address',
                 'date',
               ],
               genSort: true,

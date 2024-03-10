@@ -10,11 +10,11 @@ export function getFirstMergeField(
   mergeFields: CellMergerOptions['mergeFields'],
 ): string | null {
   if (!isArray(mergeFields)) {
-    warn('mergeFields should be an array');
+    warn('mergeFields必须是一个数组');
     return null;
   }
   if (mergeFields.length < 1) {
-    warn('mergeFields should not be empty');
+    warn('mergeFields不能为空');
     return null;
   }
   const elem = mergeFields[0];
@@ -43,18 +43,18 @@ export function validateColumns(
   columns: CellMergerOptions['columns'],
 ): boolean {
   if (!isArray(columns)) {
-    warn('columns should be an array');
+    warn('columns必须是一个数组');
     return false;
   }
   if (columns.length < 1) {
-    warn('columns should not be empty');
+    warn('columns不能为空');
     return false;
   }
   const flag = columns.every(
     (item) => isPlainObject(item) && isString(item.prop),
   );
   if (!flag) {
-    warn('columns should be an array of plain objects with prop');
+    warn('columns必须是一个数组对象，且对象中必须包含prop属性');
     return false;
   }
   return true;
@@ -69,7 +69,7 @@ export function validateMergeFields(
   mode: CellMergerOptions['mode'],
 ): boolean {
   if (!isArray(mergeFields)) {
-    warn('mergeFields should be an array');
+    warn('mergeFields必须是一个数组');
     return false;
   }
   if ([Mode.Col, Mode.RowCol].includes(mode)) {
@@ -78,7 +78,7 @@ export function validateMergeFields(
       return false;
     }
     if (mergeFields.length !== columns?.length ?? 0) {
-      warn('mergeFields.length should be equal to columns.length');
+      warn('mergeFields与columns的数组长度不一致');
       return false;
     }
   }

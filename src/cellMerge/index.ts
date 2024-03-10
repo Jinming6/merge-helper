@@ -13,12 +13,7 @@ import type {
   MergeFieldItem,
   MergeFields,
 } from './types';
-import {
-  FIRST_ID,
-  MERGE_OPTS_KEY,
-  ROW_KEY,
-  SORT_NO_KEY,
-} from '../shared/constants';
+import { MERGE_OPTS_KEY, ROW_KEY, SORT_NO_KEY } from '../shared/constants';
 import { Mode } from '../shared/enums';
 import {
   getFirstMergeField,
@@ -61,7 +56,7 @@ export class CellMerger {
     this.rowKey = rowKey;
     this.columns = columns;
     if (!isArray(this.mergeFields)) {
-      warn('mergeFields should be an array');
+      warn('mergeFields必须是一个数组');
       return;
     }
     this.sortBy = isString(sortBy)
@@ -85,6 +80,7 @@ export class CellMerger {
       }
       this.mergeCols(this.dataSource, this.columns);
     } else if (this.mode === Mode.RowCol) {
+      warn('Mode.RowCol已废弃，在未来版本将会被删除');
       this.mergeCells(this.dataSource);
       const validCol = validateColumns(columns);
       if (!validCol) {
@@ -109,7 +105,7 @@ export class CellMerger {
     mergeFields.forEach((fieldItem) => {
       const field = isString(fieldItem) ? fieldItem : fieldItem.field;
       if (!isString(field)) {
-        warn('field should be a string');
+        warn('field必须是一个字符串');
         return;
       }
       dataSource.forEach((item) => {
@@ -182,7 +178,6 @@ export class CellMerger {
       ) {
         preItem[MERGE_OPTS_KEY][field].rowspan += 1;
         item[MERGE_OPTS_KEY][field].rowspan = 0;
-        item[FIRST_ID] = isString(this.rowKey) ? preItem[this.rowKey] : null;
       } else {
         preItem = item;
       }
