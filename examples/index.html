@@ -17,14 +17,18 @@
 
   <body>
     <div id="app">
-      <el-radio-group v-model="mode" @change="getTableData">
-        <el-radio :label="Mode.Row" size="large">行</el-radio>
-        <el-radio :label="Mode.Col" size="large">列</el-radio>
-        <el-radio class="discord" :label="Mode.RowCol" size="large"
-          >行 + 列 (废弃)</el-radio
-        >
-      </el-radio-group>
+      <el-space>
+        <el-button type="primary" @click="handleCapture">截图</el-button>
+        <el-radio-group v-model="mode" @change="getTableData">
+          <el-radio :label="Mode.Row" size="large">行</el-radio>
+          <el-radio :label="Mode.Col" size="large">列</el-radio>
+          <el-radio class="discord" :label="Mode.RowCol" size="large"
+            >行 + 列 (废弃)</el-radio
+          >
+        </el-radio-group>
+      </el-space>
       <el-table
+        ref="tableRef"
         :data="tableData"
         style="width: 100%"
         :span-method="spanMethod"
@@ -49,6 +53,12 @@
 
     <script src="https://unpkg.com/vue@3"></script>
     <script src="https://unpkg.com/element-plus"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+      integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <script src="https://unpkg.com/lodash@4.17.21/lodash.js"></script>
     <script src="../dist/mergeHelper.js"></script>
     <script>
@@ -111,6 +121,9 @@
               options.columns = columns.map((item) => ({ prop: item.prop }));
               options.mergeFields = columns.map((item) => item.prop);
             }
+            if (mode.value === Mode.Col) {
+              delete options.genSort;
+            }
             const mergedData = getMergedData(options);
             tableData.value = mergedData;
           };
@@ -128,6 +141,24 @@
             getTableData();
           });
 
+          const tableRef = ref();
+          const handleCapture = () => {
+            html2canvas(tableRef.value.$el).then((canvas) => {
+              canvas.toBlob((blob) => {
+                handleDownload(blob);
+              });
+            });
+          };
+
+          const handleDownload = (blob) => {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `capture-${Date.now()}.png`;
+            link.click();
+            URL.revokeObjectURL(url);
+          };
+
           return {
             mode,
             tableData,
@@ -136,6 +167,8 @@
             getTableData,
             columns,
             getSortNo,
+            handleCapture,
+            tableRef,
           };
         },
       });

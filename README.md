@@ -113,4 +113,4 @@ $ npm i @jinming6/merge-helper
 
 # Summary
 
-😊 If [@jinming6/merge-helper](https://github.com/Jinming6/merge-helper) is helpful, you can click Star✨ .
+If [@jinming6/merge-helper](https://github.com/Jinming6/merge-helper) is helpful, you can click [Star](<(https://github.com/Jinming6/merge-helper)>) .
