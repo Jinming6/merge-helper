@@ -38,6 +38,8 @@ export class CellMerger {
   columns: CellMergerOptions['columns'];
   // 模式
   mode: CellMergerOptions['mode'];
+  // 重新计算
+  reCalc: CellMergerOptions['reCalc'];
 
   constructor(options: CellMergerOptions) {
     const {
@@ -48,9 +50,15 @@ export class CellMerger {
       columns = [],
       mode,
       sortBy,
+      reCalc,
     } = options;
     this.mode = isValueInEnum(mode, Mode) ? mode : Mode.Row;
-    this.dataSource = cloneDeep(dataSource);
+    this.reCalc = isBoolean(reCalc) ? reCalc : false;
+    if (this.reCalc) {
+      this.dataSource = this.clearDataSource(dataSource);
+    } else {
+      this.dataSource = cloneDeep(dataSource);
+    }
     this.mergeFields = cloneDeep(mergeFields);
     this.genSort = genSort ?? false;
     this.rowKey = rowKey;
@@ -241,5 +249,19 @@ export class CellMerger {
    */
   getMergedData(): DataSourceItem[] {
     return this.dataSource;
+  }
+
+  /**
+   * 清理数据源合并参数
+   */
+  clearDataSource(
+    dataSource: CellMergerOptions['dataSource'],
+  ): CellMergerOptions['dataSource'] {
+    const newDataSource = cloneDeep(dataSource);
+    newDataSource.forEach((item) => {
+      delete item[MERGE_OPTS_KEY];
+      delete item[SORT_NO_KEY];
+    });
+    return newDataSource;
   }
 }

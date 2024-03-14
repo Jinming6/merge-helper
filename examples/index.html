@@ -19,6 +19,7 @@
     <div id="app">
       <el-space>
         <el-button type="primary" @click="handleCapture">截图</el-button>
+        <el-button @click="handleReCalc">重新计算</el-button>
         <el-radio-group v-model="mode" @change="getTableData">
           <el-radio :label="Mode.Row" size="large">行</el-radio>
           <el-radio :label="Mode.Col" size="large">列</el-radio>
@@ -48,6 +49,11 @@
           :prop="item.prop"
           :label="item.label"
         ></el-table-column>
+        <el-table-column label="操作">
+          <template #default="{ row, $index }">
+            <el-button @click="handleDel($index)">删除</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
 
@@ -75,8 +81,9 @@
             { prop: 'date', label: '日期' },
           ];
           const tableData = ref([]);
+          let dataSource = [];
           const getTableData = () => {
-            const dataSource = [
+            dataSource = [
               {
                 id: 0,
                 date: '2024-03-10',
@@ -125,6 +132,7 @@
               delete options.genSort;
             }
             const mergedData = getMergedData(options);
+            console.log(mergedData);
             tableData.value = mergedData;
           };
 
@@ -159,6 +167,41 @@
             URL.revokeObjectURL(url);
           };
 
+          const handleReCalc = () => {
+            const options = {
+              mode: mode.value,
+              dataSource,
+              mergeFields: [
+                {
+                  field: 'name',
+                  callback(curItem, nextItem) {
+                    return curItem.name === nextItem.name;
+                  },
+                },
+                'address',
+                'date',
+              ],
+              genSort: true,
+              reCalc: true,
+            };
+            if ([Mode.Col, Mode.RowCol].includes(mode.value)) {
+              options.columns = columns.map((item) => ({ prop: item.prop }));
+              options.mergeFields = columns.map((item) => item.prop);
+            }
+            if (mode.value === Mode.Col) {
+              delete options.genSort;
+            }
+            const mergedData = getMergedData(options);
+            console.log(mergedData);
+            tableData.value = mergedData;
+          };
+
+          const handleDel = (index) => {
+            dataSource.splice(index, 1);
+            tableData.value = dataSource;
+            handleReCalc();
+          };
+
           return {
             mode,
             tableData,
@@ -169,6 +212,8 @@
             getSortNo,
             handleCapture,
             tableRef,
+            handleReCalc,
+            handleDel,
           };
         },
       });
