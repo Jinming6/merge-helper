@@ -8,9 +8,9 @@ Easily handle cell merges
 
 ## Features
 
-- [x] Merge `rows` and `columns`
-- [x] Generates the merged sequence number
-- [x] data fractionation
+- ✅ Merge `rows` and `columns`
+- ✅ Generates the merged sequence number
+- ✅ data fractionation
 
 # Summary
 
