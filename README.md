@@ -12,6 +12,6 @@ Easily handle cell merges
 - ✅ Generates the merged sequence number
 - ✅ data fractionation
 
-# Summary
+## Summary
 
 If [@jinming6/merge-helper](https://github.com/Jinming6/merge-helper) is helpful, you can click [Star](<(https://github.com/Jinming6/merge-helper)>) .
