@@ -4,10 +4,10 @@
   "description": "Easily handle cell merges",
   "main": "dist/mergeHelper.js",
   "scripts": {
-    "test": "jest",
-    "build": "rollup --config rollup.config.ts --configPlugin typescript",
-    "dev": "rollup --watch --config rollup.config.ts --configPlugin typescript",
-    "prepare": "husky install",
+    "test": "pnpm exec jest",
+    "build": "pnpm exec rollup --config rollup.config.ts --configPlugin typescript",
+    "dev": "pnpm exec rollup --watch --config rollup.config.ts --configPlugin typescript",
+    "prepare": "pnpm exec husky install",
     "release": "semantic-release"
   },
   "keywords": [
