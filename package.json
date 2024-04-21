@@ -4,7 +4,7 @@
   "description": "Easily handle cell merges",
   "main": "dist/mergeHelper.js",
   "scripts": {
-    "test": "pnpm exec jest",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "build": "pnpm exec rollup --config rollup.config.ts --configPlugin typescript",
     "dev": "pnpm exec rollup --watch --config rollup.config.ts --configPlugin typescript",
     "prepare": "pnpm exec husky install",
@@ -26,7 +26,7 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@types/jest": "^29.5.11",
-    "@types/lodash": "^4.14.202",
+    "@types/lodash-es": "^4.17.12",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "dotenv": "^16.4.1",
-    "lodash": "^4.17.21"
+    "lodash-es": "^4.17.21"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"

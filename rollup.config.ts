@@ -29,7 +29,7 @@ export default {
       format: 'umd',
       name,
       globals: {
-        lodash: '_',
+        lodashEs: '_',
       },
     },
     {
@@ -38,7 +38,7 @@ export default {
       name,
       plugins: [terser()],
       globals: {
-        lodash: '_',
+        lodashEs: '_',
       },
     },
   ],
@@ -52,5 +52,5 @@ export default {
       preventAssignment: true,
     }),
   ],
-  external: ['lodash'],
+  external: ['lodashEs'],
 };

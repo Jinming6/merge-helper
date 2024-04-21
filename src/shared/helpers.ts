@@ -1,5 +1,5 @@
 import type { CellMergerOptions } from '../cellMerge/types';
-import { isArray, isPlainObject, isString } from 'lodash';
+import { isArray, isPlainObject, isString } from 'lodash-es';
 import { warn } from './warning';
 import { Mode } from './enums';
 

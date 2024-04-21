@@ -5,7 +5,7 @@ import {
   isFunction,
   isBoolean,
   isArray,
-} from 'lodash';
+} from 'lodash-es';
 import type {
   CellMergerOptions,
   ColumnItem,

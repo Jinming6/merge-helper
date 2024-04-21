@@ -1,4 +1,4 @@
-import { cloneDeep, isArray, isPlainObject, isString } from 'lodash';
+import { cloneDeep, isArray, isPlainObject, isString } from 'lodash-es';
 import { CellMerger } from '../cellMerge';
 import {
   type FieldSpan,

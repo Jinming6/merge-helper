@@ -1,4 +1,4 @@
-import { isNumber, isPlainObject, isString } from 'lodash';
+import { isNumber, isPlainObject, isString } from 'lodash-es';
 import { CellMerger } from '../src/cellMerge';
 import type { CellMergerOptions, DataSourceItem } from '../src/cellMerge/types';
 import { MERGE_OPTS_KEY, SORT_NO_KEY } from '../src/shared/constants';
