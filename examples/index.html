@@ -65,11 +65,11 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
-    <script src="../dist/mergeHelper.min.js"></script>
-    <script>
+    <script type="module">
+      import * as mergeHelper from '../dist/merge-helper.min.js';
       const { createApp, ref, onMounted } = Vue;
       const { Mode, getMergedData, getFieldSpan, constants, getSortNo } =
-        window['@jinming6/mergeHelper'];
+        mergeHelper;
 
       const app = createApp({
         setup() {
