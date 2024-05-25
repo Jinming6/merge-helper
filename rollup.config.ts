@@ -22,23 +22,22 @@ const replaceName = (name: string): string => {
 const name = replaceName(pkg.name as string); // 生成的umd的name
 
 export default {
-  input: 'src/index.ts',
+  input: 'src/main.ts',
   output: [
     {
-      file: 'dist/mergeHelper.js',
-      format: 'umd',
+      dir: 'dist',
+      format: 'es',
       name,
-      globals: {
-        lodashEs: '_',
-      },
-    },
-    {
-      file: 'dist/mergeHelper.min.js',
-      format: 'umd',
-      name,
+      entryFileNames: 'merge-helper.min.js',
+      chunkFileNames: 'chunks/[name]-[hash].js',
       plugins: [terser()],
       globals: {
         lodashEs: '_',
+      },
+      manualChunks(id: string) {
+        if (id.includes('node_modules')) {
+          return 'vendor';
+        }
       },
     },
   ],

@@ -3,7 +3,7 @@ import { CellMerger } from '../src/cellMerge';
 import type { CellMergerOptions, DataSourceItem } from '../src/cellMerge/types';
 import { MERGE_OPTS_KEY, SORT_NO_KEY } from '../src/shared/constants';
 import data from '../data/data.json';
-import { Mode, getFieldSpan } from '../src';
+import { Mode, getFieldSpan } from '../src/main';
 import { getMergedData, getSortNo } from '../src/api';
 
 const validMergedData = (mergedData: DataSourceItem[]): boolean => {

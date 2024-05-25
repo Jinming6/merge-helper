@@ -1,4 +1,4 @@
-import { Mode, getFieldSpan, splitIntoFragments } from '../src';
+import { Mode, getFieldSpan, splitIntoFragments } from '../src/main';
 import { type ColumnItem, type DataSourceItem } from '../src/cellMerge/types';
 import { SORT_NO_KEY } from '../src/shared/constants';
 import { getSortNo } from '../src/api';
