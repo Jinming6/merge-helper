@@ -36,9 +36,9 @@ export class CellMerger {
   rowKey: CellMergerOptions['rowKey'];
   // 表格列
   columns: CellMergerOptions['columns'];
-  // 模式
+  // 合并模式
   mode: CellMergerOptions['mode'];
-  // 重新计算
+  // 是否重新计算合并配置
   reCalc: CellMergerOptions['reCalc'];
 
   constructor(options: CellMergerOptions) {
@@ -70,6 +70,7 @@ export class CellMerger {
     this.sortBy = isString(sortBy)
       ? sortBy
       : getFirstMergeField(this.mergeFields);
+
     this.initMergeOpts(this.dataSource, this.mergeFields);
     if (this.mode === Mode.Row) {
       this.mergeCells(this.dataSource);
@@ -112,14 +113,19 @@ export class CellMerger {
   initMergeOpts(dataSource: DataSourceItem[], mergeFields: MergeFields): void {
     mergeFields.forEach((fieldItem) => {
       const field = isString(fieldItem) ? fieldItem : fieldItem.field;
+
       if (!isString(field)) {
         warn('field必须是一个字符串');
         return;
       }
+
       dataSource.forEach((item) => {
+        // 初始化"合并配置项"
         if (!isPlainObject(item[MERGE_OPTS_KEY])) {
           item[MERGE_OPTS_KEY] = {};
         }
+
+        // 初始化"合并配置项"中的"字段默认合并值"
         if (!isPlainObject(item[MERGE_OPTS_KEY][field])) {
           item[MERGE_OPTS_KEY][field] = {
             rowspan: 1,
@@ -143,9 +149,14 @@ export class CellMerger {
    */
   mergeCells(dataSource: DataSourceItem[]): void {
     this.mergeFields.forEach((fieldItem) => {
+      // 处理合并字段字符串
       if (isString(fieldItem)) {
         this.mergeCellsByField(dataSource, fieldItem);
-      } else if (isPlainObject(fieldItem)) {
+        return;
+      }
+
+      // 处理合并字段对象
+      if (isPlainObject(fieldItem)) {
         const { field, callback } = fieldItem;
         if (isString(field) && isFunction(callback)) {
           this.mergeCellsByField(dataSource, field, callback);
@@ -165,20 +176,29 @@ export class CellMerger {
     if (!isString(field)) {
       return;
     }
+
     let preItem: DataSourceItem | undefined;
     let startNo = 1;
+
     for (let i = 0; i < dataSource.length; i++) {
       const item = dataSource[i];
+
+      // 如果要求排序，则初始化排序字段
       if (isBoolean(this.genSort) && this.sortBy === field) {
         item[SORT_NO_KEY] = startNo;
       }
+
       if (preItem == null) {
         preItem = item;
         continue;
       }
+
+      // 跳过已合并的项
       if (this.isMergedCell(item, field)) {
         continue;
       }
+
+      // 进行合并判断
       if (
         isFunction(condition)
           ? condition(preItem, item)
@@ -189,6 +209,8 @@ export class CellMerger {
       } else {
         preItem = item;
       }
+
+      // 如果当前是指定的排序字段，则排序号累加
       if (this.sortBy === field) {
         startNo += 1;
       }
