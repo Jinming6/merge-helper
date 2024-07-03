@@ -166,6 +166,27 @@ export class CellMerger {
   }
 
   /**
+   * 判断是否需要排序
+   */
+  isShouldSort(field: string): boolean {
+    return isBoolean(this.genSort) && this.sortBy === field;
+  }
+
+  /**
+   * 判断是否需要合并
+   */
+  isShouldMerge(
+    preItem: DataSourceItem,
+    item: DataSourceItem,
+    field: string,
+    condition?: MergeFieldItem['callback'],
+  ): boolean {
+    return isFunction(condition)
+      ? condition(preItem, item)
+      : preItem[field] === item[field];
+  }
+
+  /**
    * 根据字段来计算单元格的合并
    */
   mergeCellsByField(
@@ -184,7 +205,7 @@ export class CellMerger {
       const item = dataSource[i];
 
       // 如果要求排序，则初始化排序字段
-      if (isBoolean(this.genSort) && this.sortBy === field) {
+      if (this.isShouldSort(field)) {
         item[SORT_NO_KEY] = startNo;
       }
 
@@ -199,11 +220,7 @@ export class CellMerger {
       }
 
       // 进行合并判断
-      if (
-        isFunction(condition)
-          ? condition(preItem, item)
-          : preItem[field] === item[field]
-      ) {
+      if (this.isShouldMerge(preItem, item, field, condition)) {
         preItem[MERGE_OPTS_KEY][field].rowspan += 1;
         item[MERGE_OPTS_KEY][field].rowspan = 0;
       } else {
@@ -231,33 +248,51 @@ export class CellMerger {
   }
 
   /**
+   * 判断是否应该合并列
+   */
+  isShouldMergeCol(
+    preColumn: ColumnItem,
+    curItem: DataSourceItem,
+    curColumn: ColumnItem,
+  ): boolean {
+    return (
+      curItem[preColumn.prop] === curItem[curColumn.prop] &&
+      curItem[MERGE_OPTS_KEY][preColumn.prop].rowspan ===
+        curItem[MERGE_OPTS_KEY][curColumn.prop].rowspan
+    );
+  }
+
+  /**
    * 根据「列字段」进行合并计算
    */
   mergeColByField(curItem: DataSourceItem, columns: ColumnItem[]): void {
     const columnsLen = columns.length;
     let preColumn: ColumnItem | undefined;
     for (let j = 0; j < columnsLen; j++) {
-      // 当前列
       const curColumn = columns[j];
+      // 跳过首列
       if (preColumn == null) {
         preColumn = curColumn;
         continue;
       }
+
+      // 跳过“序号列”
       if (curColumn.prop === SORT_NO_KEY) {
         continue;
       }
+
+      // 跳过“空属性列”
       if (curItem[curColumn.prop] == null) {
         continue;
       }
-      // 如果当前列的colspan为0，则跳过
+
+      // 跳过“已被合并的列”
       if (curItem[MERGE_OPTS_KEY][curColumn.prop].colspan === 0) {
         continue;
       }
-      if (
-        curItem[preColumn.prop] === curItem[curColumn.prop] &&
-        curItem[MERGE_OPTS_KEY][preColumn.prop].rowspan ===
-          curItem[MERGE_OPTS_KEY][curColumn.prop].rowspan
-      ) {
+
+      // 进行合并判断
+      if (this.isShouldMergeCol(preColumn, curItem, curColumn)) {
         curItem[MERGE_OPTS_KEY][preColumn.prop].colspan += 1;
         curItem[MERGE_OPTS_KEY][curColumn.prop].colspan = 0;
       } else {
