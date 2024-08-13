@@ -1,6 +1,9 @@
 import { Mode, getFieldSpan, splitIntoFragments } from '../src/main';
-import { type ColumnItem, type DataSourceItem } from '../src/cellMerge/types';
-import { SORT_NO_KEY } from '../src/shared/constants';
+import {
+  type ColumnItem,
+  type DataSourceItem,
+} from '../src/cellMerger/models/types';
+import { SORT_NO_KEY } from '../src/cellMerger/models/constants';
 import { getSortNo } from '../src/api';
 
 const getColumns = (): ColumnItem[] => {

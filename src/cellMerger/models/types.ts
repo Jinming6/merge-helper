@@ -1,4 +1,4 @@
-import { type Mode } from '../shared/enums';
+import { type Mode } from './enums';
 
 export interface MergeFieldItem {
   field: string;
@@ -35,4 +35,11 @@ export type ColumnMergeCondition = (
 export interface FieldSpan {
   rowspan: number;
   colspan: number;
+}
+
+export interface SplitIntoFragmentsOpts extends CellMergerOptions {
+  /**
+   * 每页条数
+   */
+  pageSize: number;
 }

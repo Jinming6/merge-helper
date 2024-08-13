@@ -1,6 +1,6 @@
-import { CellMerger } from './cellMerge';
-import * as constants from './shared/constants';
-import { Mode } from './shared/enums';
+import { CellMerger } from './cellMerger';
+import * as constants from './cellMerger/models/constants';
+import { Mode } from './cellMerger/models/enums';
 import {
   getMergedData,
   splitIntoFragments,

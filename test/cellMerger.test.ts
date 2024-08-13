@@ -1,7 +1,13 @@
 import { isNumber, isPlainObject, isString } from 'lodash-es';
-import { CellMerger } from '../src/cellMerge';
-import type { CellMergerOptions, DataSourceItem } from '../src/cellMerge/types';
-import { MERGE_OPTS_KEY, SORT_NO_KEY } from '../src/shared/constants';
+import { CellMerger } from '../src/cellMerger';
+import type {
+  CellMergerOptions,
+  DataSourceItem,
+} from '../src/cellMerger/models/types';
+import {
+  MERGE_OPTS_KEY,
+  SORT_NO_KEY,
+} from '../src/cellMerger/models/constants';
 import data from '../data/data.json';
 import { Mode, getFieldSpan } from '../src/main';
 import { getMergedData, getSortNo } from '../src/api';
