@@ -4,7 +4,7 @@
 
 Easily handle cell merges
 
-![capture-1710119346804.png](https://s2.loli.net/2024/03/11/Fb6mMay49HWjrke.png)
+![WechatIMG714.jpg](https://s2.loli.net/2024/08/17/zc5mqlusNWRG6Tf.png)
 
 ## Features
 
