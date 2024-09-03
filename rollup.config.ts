@@ -5,6 +5,7 @@ import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import replace from '@rollup/plugin-replace';
 import dotenv from 'dotenv';
+import type { RollupOptions } from 'rollup';
 
 dotenv.config();
 
@@ -21,7 +22,7 @@ const replaceName = (name: string): string => {
 };
 const name = replaceName(pkg.name as string); // 生成的umd的name
 
-export default {
+const config: RollupOptions = {
   input: 'src/main.ts',
   output: [
     {
@@ -53,3 +54,5 @@ export default {
   ],
   external: ['lodashEs'],
 };
+
+export default config;
